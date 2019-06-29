@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -30,13 +31,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        packageManager = getApplicationContext().getPackageManager();
+        packageManager = getPackageManager();
 
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         List<ResolveInfo> resInfos = packageManager.queryIntentActivities(intent, 0);
-
+        Collections.sort(resInfos, new ResolveInfo.DisplayNameComparator(packageManager));
         addToAppList(resInfos);
 
         appListAdapter = new AppListAdapter(this::launchApp);
@@ -54,21 +55,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addToAppList(List<ResolveInfo> resInfos) {
-        HashSet<AppModel> appSet = new HashSet<>();
 
         for(ResolveInfo resolveInfo : resInfos) {
-            if(packageManager.getApplicationLabel(resolveInfo.activityInfo.applicationInfo).toString()
-                    .equals(getString(R.string.app_name))) {
+            String appLabel =(String) resolveInfo.loadLabel(packageManager);
+            if(appLabel.equals(getString(R.string.app_name))) {
                 continue;
             }
             AppModel appModel = new AppModel();
             appModel.setPackageName(resolveInfo.activityInfo.packageName);
-            appModel.setAppLabel(packageManager.getApplicationLabel(resolveInfo.activityInfo.applicationInfo).toString());
+            appModel.setAppLabel(appLabel);
             appModel.setLauncherIcon(packageManager.getApplicationIcon(resolveInfo.activityInfo.applicationInfo));
-            appSet.add(appModel);
+            appList.add(appModel);
         }
 
-        appList.addAll(appSet);
     }
 
     private void launchApp(String packageName) {
