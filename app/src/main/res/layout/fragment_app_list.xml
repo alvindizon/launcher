@@ -8,7 +8,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".AppListFragment">
 
         <FrameLayout
             android:layout_width="0dp"
@@ -19,13 +19,10 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintTop_toTopOf="parent">
 
-            <fragment
-                android:id="@+id/nav_host_fragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_nav"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/navigation_main"/>
+                android:layout_height="match_parent"/>
 
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
