@@ -18,4 +18,8 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
     }
 
+    public NavController getNavController() {
+        return navController;
+    }
+
 }

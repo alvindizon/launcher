@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation_main.xml"
-    app:startDestination="@id/app_list_dest"
+    app:startDestination="@id/favorites_dest"
     xmlns:tools="http://schemas.android.com/tools">
 
     <fragment
@@ -9,4 +9,13 @@
         android:name="com.alvindizon.launcher.AppListFragment"
         android:label="fragment_app_list"
         tools:layout="@layout/fragment_app_list"/>
+    <fragment
+        android:id="@+id/favorites_dest"
+        android:name="com.alvindizon.launcher.FavoritesFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorites">
+        <action
+            android:id="@+id/action_favorites_dest_to_app_list_dest"
+            app:destination="@id/app_list_dest" />
+    </fragment>
 </navigation>
