@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">launcher</string>
     <string name="label_no_favs">Click here to start adding favorites</string>
+    <string name="label_add_fave_apps">Add favorite apps</string>
 </resources>
