@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +26,10 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -114,10 +117,22 @@ public class AppListFragment extends Fragment {
 
     private void saveFaveAppListToPrefs(List<AppModel> faveAppList) {
         List<String> favePackageNameList = new ArrayList<>();
+
+
+        String faveAppListJsonString = preferences.getString(FAVE_LIST, "");
+        // get existing fave list if it exists
+        if (!TextUtils.isEmpty(faveAppListJsonString)) {
+            try {
+                favePackageNameList = faveAppJsonAdapter.fromJson(faveAppListJsonString);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         for(AppModel appModel : faveAppList) {
-            Log.d(TAG, appModel.getPackageName());
             favePackageNameList.add(appModel.getPackageName());
         }
+
         String faveAppListJson = faveAppJsonAdapter.toJson(favePackageNameList);
         preferences.edit().putString(FAVE_LIST, faveAppListJson).apply();
     }
