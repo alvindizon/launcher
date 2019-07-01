@@ -8,7 +8,11 @@
         android:id="@+id/app_list_dest"
         android:name="com.alvindizon.launcher.AppListFragment"
         android:label="fragment_app_list"
-        tools:layout="@layout/fragment_app_list"/>
+        tools:layout="@layout/fragment_app_list">
+        <action
+            android:id="@+id/action_app_list_dest_to_favorites_dest"
+            app:destination="@id/favorites_dest" />
+    </fragment>
     <fragment
         android:id="@+id/favorites_dest"
         android:name="com.alvindizon.launcher.FavoritesFragment"

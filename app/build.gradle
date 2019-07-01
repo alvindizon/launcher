@@ -42,4 +42,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment:2.1.0-alpha05"
     implementation "androidx.navigation:navigation-ui:2.1.0-alpha05"
 
+    // serialization of objects
+    implementation 'com.squareup.moshi:moshi:1.7.0'
+
 }
