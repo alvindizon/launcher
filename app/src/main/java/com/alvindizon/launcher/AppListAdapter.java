@@ -1,8 +1,11 @@
 package com.alvindizon.launcher;
 
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,13 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder> {
+    public static final String TAG = AppListAdapter.class.getSimpleName();
 
     public interface AppItemListener {
-        void onItemClick(String packageName);
+        void onItemClick(AppModel app);
+        void onItemUncheck(AppModel app);
     }
 
-    private List<AppModel> appList = new ArrayList<>();
+    private List<AppModel> appList;
     private AppItemListener onAppItemClickListener;
+    private SparseBooleanArray isCheckedArray = new SparseBooleanArray();
 
     public AppListAdapter(AppItemListener onAppItemClickListener) {
         this.onAppItemClickListener = onAppItemClickListener;
@@ -27,31 +33,42 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
 
     public void setAppList(List<AppModel> appList) {
         this.appList = appList;
-        notifyDataSetChanged();
     }
-
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView appIcon;
-        private final TextView appLabel;
-        private final TextView appPackageName;
+        private final CheckedTextView appLabel;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             appIcon = itemView.findViewById(R.id.app_icon);
             appLabel = itemView.findViewById(R.id.app_label);
-            appPackageName = itemView.findViewById(R.id.app_package);
         }
 
         private void bind(AppModel app, int i) {
             appIcon.setImageDrawable(app.getLauncherIcon());
             appLabel.setText(app.getAppLabel());
-            appPackageName.setText(app.getPackageName());
-            this.itemView.setOnClickListener(v -> onAppItemClickListener.onItemClick(appList.get(i).getPackageName()));
+            appLabel.setChecked(isCheckedArray.get(i, false));
+//            this.itemView.setOnClickListener(v -> onAppItemClickListener.onItemClick(appList.get(i).getPackageName()));
+           this.itemView.setOnClickListener(v -> {
+               boolean isChecked = isCheckedArray.get(i, false);
+
+               // if current checkbox is not checked, set it to checked when user clicks, else do the reverse
+               // update the SparseBooleanArray item corresponding to the current checkbox
+               appLabel.setChecked(!isChecked);
+               isCheckedArray.put(i, !isChecked);
+
+               if(appLabel.isChecked()) {
+                   Log.d(TAG, "isChecked: " + app.getPackageName());
+                   onAppItemClickListener.onItemClick(app);
+               } else {
+                   Log.d(TAG, "!isChecked: " + app.getPackageName());
+                   onAppItemClickListener.onItemUncheck(app);
+               }
+           });
         }
     }
-
 
     @NonNull
     @Override
@@ -72,3 +89,4 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
         return appList.size();
     }
 }
+

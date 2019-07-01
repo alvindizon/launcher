@@ -19,16 +19,12 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@android:drawable/sym_def_app_icon" />
 
-    <CheckedTextView
+    <TextView
         android:id="@+id/app_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:drawableStart="@null"
-        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-        android:drawablePadding="72dp"
-        android:checked="false"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -40,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85714287" />
+        app:layout_constraintGuide_percent="0.71" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
