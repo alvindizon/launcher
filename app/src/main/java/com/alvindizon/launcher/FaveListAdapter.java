@@ -14,12 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHolder> {
+    
     public interface FaveItemClickListener {
         void onItemClick(String packageName);
     }
 
+    public interface LongItemClickListener {
+        void onItemLongClick(View v, int position);
+    }
+
     private List<AppModel> appList = new ArrayList<>();
     private FaveItemClickListener onFaveItemClickListener;
+    private LongItemClickListener onLongItemClickListener;
 
     public FaveListAdapter(FaveItemClickListener onFaveItemClickListener) {
         this.onFaveItemClickListener = onFaveItemClickListener;
@@ -30,6 +36,9 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
         notifyDataSetChanged();
     }
 
+    public void setOnLongItemClickListener(LongItemClickListener onLongItemClickListener) {
+        this.onLongItemClickListener = onLongItemClickListener;
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -46,6 +55,12 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
             appIcon.setImageDrawable(app.getLauncherIcon());
             appLabel.setText(app.getAppLabel());
             this.itemView.setOnClickListener(v -> onFaveItemClickListener.onItemClick(appList.get(i).getPackageName()));
+            this.itemView.setOnLongClickListener(v -> {
+                if(onLongItemClickListener != null) {
+                    onLongItemClickListener.onItemLongClick(v, i);
+                }
+                return true;
+            });
         }
     }
 
