@@ -3,7 +3,6 @@ package com.alvindizon.launcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -57,7 +56,7 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
             this.itemView.setOnClickListener(v -> onFaveItemClickListener.onItemClick(appList.get(i).getPackageName()));
             this.itemView.setOnLongClickListener(v -> {
                 if(onLongItemClickListener != null) {
-                    onLongItemClickListener.onItemLongClick(v, i);
+                    onLongItemClickListener.onItemLongClick(v, getAdapterPosition());
                 }
                 return true;
             });
