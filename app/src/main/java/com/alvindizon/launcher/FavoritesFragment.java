@@ -164,7 +164,7 @@ public class FavoritesFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_delete_app:
                 removeAppFromList(currentAdapterPosition);
-                faveListAdapter.notifyDataSetChanged();
+                faveListAdapter.notifyItemRemoved(currentAdapterPosition);
                 // if list is empty after deleting an app, display add faves button again
                 if(faveList.isEmpty()) {
                     binding.button.setVisibility(View.VISIBLE);
