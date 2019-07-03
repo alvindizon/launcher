@@ -155,27 +155,25 @@ public class FavoritesFragment extends Fragment {
 
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        MenuInflater inflater = requireActivity().getMenuInflater();
-        inflater.inflate(R.menu.menu_fave_item, menu);
+        menu.setHeaderTitle(faveList.get(currentAdapterPosition).getAppLabel());
+        menu.add(0, v.getId(), 0, "Delete");
     }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_delete_app:
-                removeAppFromList(currentAdapterPosition);
-                faveListAdapter.notifyItemRemoved(currentAdapterPosition);
-                // if list is empty after deleting an app, display add faves button again
-                if(faveList.isEmpty()) {
-                    binding.button.setVisibility(View.VISIBLE);
-                    binding.frameFav.setVisibility(View.GONE);
-                } else {
-                    binding.button.setVisibility(View.GONE);
-                    binding.frameFav.setVisibility(View.VISIBLE);
-                }
-                break;
-            default:
-                break;
+        if(item.getTitle() == "Delete") {
+            removeAppFromList(currentAdapterPosition);
+            faveListAdapter.notifyItemRemoved(currentAdapterPosition);
+            // if list is empty after deleting an app, display add faves button again
+            if(faveList.isEmpty()) {
+                binding.button.setVisibility(View.VISIBLE);
+                binding.frameFav.setVisibility(View.GONE);
+            } else {
+                binding.button.setVisibility(View.GONE);
+                binding.frameFav.setVisibility(View.VISIBLE);
+            }
+        } else {
+            return false;
         }
         return true;
     }
