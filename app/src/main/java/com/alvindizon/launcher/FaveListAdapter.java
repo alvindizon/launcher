@@ -1,12 +1,19 @@
 package com.alvindizon.launcher;
 
+import androidx.appcompat.view.ActionMode;
+
+import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -18,13 +25,47 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
         void onItemClick(String packageName);
     }
 
-    public interface LongItemClickListener {
-        void onItemLongClick(View v, int position);
+    public interface DeleteItemListener {
+        void onDeleteClick(List<AppModel> newAppList);
     }
 
     private List<AppModel> appList = new ArrayList<>();
     private FaveItemClickListener onFaveItemClickListener;
-    private LongItemClickListener onLongItemClickListener;
+    private DeleteItemListener onDeleteItemListener;
+    private boolean multiSelect = false;
+    private List<AppModel> selectedItems = new ArrayList<>();
+    private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            multiSelect = true;
+            menu.add("Delete");
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            for(AppModel app : selectedItems) {
+                appList.remove(app);
+            }
+            if(onDeleteItemListener != null) {
+                onDeleteItemListener.onDeleteClick(appList);
+            }
+            mode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            multiSelect = false;
+            selectedItems.clear();
+            notifyDataSetChanged();
+        }
+    };
 
     public FaveListAdapter(FaveItemClickListener onFaveItemClickListener) {
         this.onFaveItemClickListener = onFaveItemClickListener;
@@ -35,29 +76,55 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public void setOnLongItemClickListener(LongItemClickListener onLongItemClickListener) {
-        this.onLongItemClickListener = onLongItemClickListener;
+    public void setOnDeleteItemListener(DeleteItemListener onDeleteItemListener) {
+        this.onDeleteItemListener = onDeleteItemListener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView appIcon;
         private final TextView appLabel;
+        private final ConstraintLayout itemLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             appIcon = itemView.findViewById(R.id.app_icon);
             appLabel = itemView.findViewById(R.id.app_label);
+            itemLayout = itemView.findViewById(R.id.item_layout);
+        }
+
+        private void selectItem(AppModel app) {
+            if(multiSelect) {
+                if(selectedItems.contains(app)) {
+                    selectedItems.remove(app);
+                    itemLayout.setBackgroundColor(Color.WHITE);
+                } else {
+                    selectedItems.add(app);
+                    itemLayout.setBackgroundColor(Color.LTGRAY);
+                }
+            }
         }
 
         private void bind(AppModel app, int i) {
             appIcon.setImageDrawable(app.getLauncherIcon());
             appLabel.setText(app.getAppLabel());
-            this.itemView.setOnClickListener(v -> onFaveItemClickListener.onItemClick(appList.get(i).getPackageName()));
-            this.itemView.setOnLongClickListener(v -> {
-                if(onLongItemClickListener != null) {
-                    onLongItemClickListener.onItemLongClick(v, getAdapterPosition());
+
+            if(selectedItems.contains(app)) {
+                itemLayout.setBackgroundColor(Color.LTGRAY);
+            } else {
+                itemLayout.setBackgroundColor(Color.WHITE);
+            }
+
+            this.itemView.setOnClickListener(v ->{
+                if(multiSelect) {
+                    selectItem(app);
+                } else {
+                    onFaveItemClickListener.onItemClick(appList.get(i).getPackageName());
                 }
+            });
+            this.itemView.setOnLongClickListener(v -> {
+                ((AppCompatActivity) v.getContext()).startSupportActionMode(actionModeCallbacks);
+                selectItem(app);
                 return true;
             });
         }
