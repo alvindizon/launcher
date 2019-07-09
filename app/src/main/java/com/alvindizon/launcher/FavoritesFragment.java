@@ -43,7 +43,6 @@ public class FavoritesFragment extends Fragment {
     private List<String> favePackageNameList = new ArrayList<>();
     private NavController navController;
     private SharedPreferences preferences;
-    private int currentAdapterPosition;
     JsonAdapter<List<String>> faveAppJsonAdapter;
 
     @Nullable
@@ -72,10 +71,19 @@ public class FavoritesFragment extends Fragment {
 
         faveListAdapter = new FaveListAdapter(this::launchApp);
         faveListAdapter.setAppList(faveList);
-        faveListAdapter.setOnLongItemClickListener((view, position) -> {
-            currentAdapterPosition = position;
-            view.showContextMenu();
+
+        faveListAdapter.setOnDeleteItemListener(list -> {
+            faveList = list;
+            saveFaveAppListToPrefs(faveList);
+            if(faveList.isEmpty()) {
+                binding.button.setVisibility(View.VISIBLE);
+                binding.frameFav.setVisibility(View.GONE);
+            } else {
+                binding.button.setVisibility(View.GONE);
+                binding.frameFav.setVisibility(View.VISIBLE);
+            }
         });
+
         DividerItemDecoration itemDecorator = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(requireContext(), R.drawable.recycler_horizontal_bottom_border)));
         binding.rvNav.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -138,7 +146,6 @@ public class FavoritesFragment extends Fragment {
                     }
                 });
 
-        registerForContextMenu(binding.rvNav);
         binding.button.setOnClickListener((v -> addFavorites()));
         binding.toolbar.inflateMenu(R.menu.menu_add_apps);
         binding.toolbar.setOnMenuItemClickListener(item -> {
@@ -151,40 +158,6 @@ public class FavoritesFragment extends Fragment {
             }
             return super.onOptionsItemSelected(item);
         });
-    }
-
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        menu.setHeaderTitle(faveList.get(currentAdapterPosition).getAppLabel());
-        menu.add(0, v.getId(), 0, "Delete");
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        if(item.getTitle() == "Delete") {
-            removeAppFromList(currentAdapterPosition);
-            faveListAdapter.notifyItemRemoved(currentAdapterPosition);
-            // if list is empty after deleting an app, display add faves button again
-            if(faveList.isEmpty()) {
-                binding.button.setVisibility(View.VISIBLE);
-                binding.frameFav.setVisibility(View.GONE);
-            } else {
-                binding.button.setVisibility(View.GONE);
-                binding.frameFav.setVisibility(View.VISIBLE);
-            }
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Remove app from recyclerview, and update saved app list to preferences
-     * @param currentAdapterPosition current adapter/recyclerview position on long press
-     */
-    private void removeAppFromList(int currentAdapterPosition) {
-        faveList.remove(currentAdapterPosition);
-        saveFaveAppListToPrefs(faveList);
     }
 
     private void addFavorites() {
