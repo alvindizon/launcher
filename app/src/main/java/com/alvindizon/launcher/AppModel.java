@@ -33,4 +33,13 @@ public class AppModel {
     public Drawable getLauncherIcon() {
         return launcherIcon;
     }
+
+    @Override
+    public String toString() {
+        return "AppModel{" +
+                "packageName='" + packageName + '\'' +
+                ", appLabel='" + appLabel + '\'' +
+                ", launcherIcon=" + launcherIcon +
+                '}';
+    }
 }
