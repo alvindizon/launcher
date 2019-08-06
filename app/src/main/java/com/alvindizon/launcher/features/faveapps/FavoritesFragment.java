@@ -1,4 +1,4 @@
-package com.alvindizon.launcher;
+package com.alvindizon.launcher.features.faveapps;
 
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -6,10 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -23,6 +20,9 @@ import androidx.navigation.NavController;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.application.MainActivity;
+import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.databinding.FragmentFavoritesBinding;
 import com.squareup.moshi.JsonAdapter;
 
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.alvindizon.launcher.MainActivity.FAVE_LIST;
+import static com.alvindizon.launcher.application.MainActivity.FAVE_LIST;
 
 public class FavoritesFragment extends Fragment {
     public static final String TAG = FavoritesFragment.class.getSimpleName();

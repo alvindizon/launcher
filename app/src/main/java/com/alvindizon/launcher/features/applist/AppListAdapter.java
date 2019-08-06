@@ -1,4 +1,4 @@
-package com.alvindizon.launcher;
+package com.alvindizon.launcher.features.applist;
 
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -7,12 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.R;
+
 import java.util.List;
 
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder> {

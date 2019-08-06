@@ -1,4 +1,4 @@
-package com.alvindizon.launcher;
+package com.alvindizon.launcher.features.applist;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,9 @@ import android.content.pm.ResolveInfo;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
+
+import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

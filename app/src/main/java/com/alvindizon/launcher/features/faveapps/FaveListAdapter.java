@@ -1,6 +1,4 @@
-package com.alvindizon.launcher;
-
-import androidx.appcompat.view.ActionMode;
+package com.alvindizon.launcher.features.faveapps;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -13,8 +11,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.R;
 
 import java.util.ArrayList;
 import java.util.List;

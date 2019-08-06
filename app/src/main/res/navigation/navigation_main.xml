@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/app_list_dest"
-        android:name="com.alvindizon.launcher.AppListFragment"
+        android:name="com.alvindizon.launcher.features.applist.AppListFragment"
         android:label="fragment_app_list"
         tools:layout="@layout/fragment_app_list">
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/favorites_dest"
-        android:name="com.alvindizon.launcher.FavoritesFragment"
+        android:name="com.alvindizon.launcher.features.faveapps.FavoritesFragment"
         android:label="fragment_favorites"
         tools:layout="@layout/fragment_favorites">
         <action
