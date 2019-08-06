@@ -1,4 +1,4 @@
-package com.alvindizon.launcher;
+package com.alvindizon.launcher.features.applist;
 
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,6 +20,9 @@ import androidx.navigation.NavController;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.application.MainActivity;
+import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.databinding.FragmentAppListBinding;
 import com.squareup.moshi.JsonAdapter;
 
@@ -28,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.alvindizon.launcher.MainActivity.FAVE_LIST;
+import static com.alvindizon.launcher.application.MainActivity.FAVE_LIST;
 
 public class AppListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<AppModel>> {
     public static final String TAG = AppListFragment.class.getSimpleName();

@@ -1,4 +1,4 @@
-package com.alvindizon.launcher;
+package com.alvindizon.launcher.core;
 
 import android.graphics.drawable.Drawable;
 
