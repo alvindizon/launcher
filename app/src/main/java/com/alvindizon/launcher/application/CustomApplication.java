@@ -9,7 +9,6 @@ import com.alvindizon.launcher.di.module.ApplicationModule;
 import com.alvindizon.launcher.di.module.ViewModelModule;
 
 public class CustomApplication extends Application {
-
     private static CustomApplication INSTANCE;
 
     SingletonComponent singletonComponent;
@@ -18,6 +17,7 @@ public class CustomApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        INSTANCE = this;
         singletonComponent = DaggerSingletonComponent.builder()
                             .applicationModule(new ApplicationModule(this))
                             .build();
