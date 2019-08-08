@@ -56,7 +56,8 @@ public class FavoritesFragment extends Fragment {
         Injector.getViewModelComponent().inject(this);
         super.onCreate(savedInstanceState);
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
-        viewModel.setPackageManager(requireActivity().getPackageManager());
+        packageManager = requireActivity().getPackageManager();
+        viewModel.setPackageManager(packageManager);
         navController = ((MainActivity) requireActivity()).getNavController();
     }
 
