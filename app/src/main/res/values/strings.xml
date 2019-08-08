@@ -3,4 +3,6 @@
     <string name="label_no_favs">Click here to start adding favorites</string>
     <string name="label_add_fave_apps">Add favorite apps</string>
     <string name="label_remove_app">Remove app</string>
+    <string name="prompt_saving">Saving…</string>
+    <string name="prompt_error">Error saving apps!</string>
 </resources>
