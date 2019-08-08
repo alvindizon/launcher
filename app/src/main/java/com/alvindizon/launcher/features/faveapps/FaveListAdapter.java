@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHolder> {
-    
+
     public interface FaveItemClickListener {
         void onItemClick(String packageName);
     }
@@ -149,5 +149,10 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
     @Override
     public int getItemCount() {
         return appList.size();
+    }
+
+    public void clear() {
+        appList.clear();
+        notifyDataSetChanged();
     }
 }
