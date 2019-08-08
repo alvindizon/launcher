@@ -13,10 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.R;
+import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.core.AppModelDiffCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,8 +153,11 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
         return appList.size();
     }
 
-    public void clear() {
-        appList.clear();
-        notifyDataSetChanged();
+    public void swapItems(List<AppModel> apps) {
+        final AppModelDiffCallback diffCallback = new AppModelDiffCallback(this.appList, apps);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+        this.appList.clear();
+        this.appList.addAll(apps);
+        diffResult.dispatchUpdatesTo(this);
     }
 }

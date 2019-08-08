@@ -37,7 +37,7 @@ public class FavoritesViewModel extends ViewModel {
     private PackageManager packageManager;
     private CompositeDisposable compositeDisposable;
     private JsonAdapter<List<String>> faveAppJsonAdapter;
-    private List<AppModel> faveList = new ArrayList<>();
+
     private List<String> favePackageNameList = new ArrayList<>();
 
     @Inject
@@ -52,7 +52,6 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     public LiveData<List<AppModel>> loadFaveAppList() {
-        Log.d(TAG, "loadFaveAppList: start");
         MutableLiveData<List<AppModel>> listData = new MutableLiveData<>();
         compositeDisposable.add(loadFavesFromPrefs()
             .subscribeOn(Schedulers.io())
@@ -62,7 +61,6 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     public LiveData<SaveStatus> saveFaveApps(List<AppModel> faveList) {
-        Log.d(TAG, "saveFaveApps: start");
         MutableLiveData<SaveStatus> saveStatus = new MutableLiveData<>();
         compositeDisposable.add(saveFaveAppListToPrefs(faveList)
             .subscribeOn(Schedulers.io())
@@ -80,6 +78,8 @@ public class FavoritesViewModel extends ViewModel {
     private Single<List<AppModel>> loadFavesFromPrefs() {
         return Single.create(emitter -> {
             String faveAppListJsonString = preferenceRepository.get(R.string.key_fave_list, "");
+            // use new list every time app list is loaded from prefs to prevent duplicates
+            List<AppModel> faveList = new ArrayList<>();
             if (!TextUtils.isEmpty(faveAppListJsonString)) {
                 try {
                     favePackageNameList = faveAppJsonAdapter.fromJson(faveAppListJsonString);

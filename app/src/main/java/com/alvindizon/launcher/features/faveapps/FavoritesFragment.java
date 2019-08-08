@@ -1,6 +1,5 @@
 package com.alvindizon.launcher.features.faveapps;
 
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +25,6 @@ import com.alvindizon.launcher.core.SaveStatus;
 import com.alvindizon.launcher.core.ViewModelFactory;
 import com.alvindizon.launcher.databinding.FragmentFavoritesBinding;
 import com.alvindizon.launcher.di.Injector;
-import com.squareup.moshi.JsonAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +39,7 @@ public class FavoritesFragment extends Fragment {
     private FaveListAdapter faveListAdapter;
     FragmentFavoritesBinding binding;
     private List<AppModel> faveList = new ArrayList<>();
-    private List<String> favePackageNameList = new ArrayList<>();
     private NavController navController;
-    private SharedPreferences preferences;
-    JsonAdapter<List<String>> faveAppJsonAdapter;
 
     @Inject
     public ViewModelFactory viewModelFactory;
@@ -110,10 +105,9 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        faveListAdapter.clear();
         viewModel.loadFaveAppList().observe(this, list -> {
-            faveList = new ArrayList<>(list);
-            faveListAdapter.setAppList(faveList);
+            faveList = list;
+            faveListAdapter.swapItems(list);
             updateRecyclerView();
         });
     }
@@ -133,6 +127,7 @@ public class FavoritesFragment extends Fragment {
         try {
             startActivity(packageManager.getLaunchIntentForPackage(packageName));
         } catch (Exception e) {
+            e.printStackTrace();
             Toast.makeText(requireContext(), "Could not launch app \" " + packageName + "\"", Toast.LENGTH_LONG).show();
         }
     }
