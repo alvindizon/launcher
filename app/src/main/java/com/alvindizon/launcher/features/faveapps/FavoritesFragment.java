@@ -99,17 +99,14 @@ public class FavoritesFragment extends Fragment {
         binding.rvNav.setAdapter(faveListAdapter);
         Log.d(TAG, "onCreateView: done initial RV setup");
         updateRecyclerView();
-        return binding.getRoot();
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
         viewModel.loadFaveAppList().observe(this, list -> {
             faveList = list;
             faveListAdapter.swapItems(list);
             updateRecyclerView();
         });
+
+        return binding.getRoot();
     }
 
     private void updateRecyclerView() {
