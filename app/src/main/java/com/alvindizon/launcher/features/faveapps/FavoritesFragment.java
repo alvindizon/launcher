@@ -100,7 +100,7 @@ public class FavoritesFragment extends Fragment {
         Log.d(TAG, "onCreateView: done initial RV setup");
         updateRecyclerView();
 
-        viewModel.loadFaveAppList().observe(this, list -> {
+        viewModel.loadFaveAppList().observe(getViewLifecycleOwner(), list -> {
             faveList = list;
             faveListAdapter.swapItems(list);
             updateRecyclerView();
