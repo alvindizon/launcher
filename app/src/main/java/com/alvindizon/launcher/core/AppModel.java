@@ -10,6 +10,12 @@ public class AppModel {
 
     private Drawable launcherIcon;
 
+    public AppModel(String packageName, String appLabel, Drawable launcherIcon) {
+        this.packageName = packageName;
+        this.appLabel = appLabel;
+        this.launcherIcon = launcherIcon;
+    }
+
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }

@@ -2,10 +2,9 @@ package com.alvindizon.launcher.di.module;
 
 import androidx.lifecycle.ViewModel;
 
+import com.alvindizon.launcher.application.MainViewModel;
 import com.alvindizon.launcher.core.PreferenceRepository;
 import com.alvindizon.launcher.core.ViewModelFactory;
-import com.alvindizon.launcher.features.applist.AppListViewModel;
-import com.alvindizon.launcher.features.faveapps.FavoritesViewModel;
 import com.squareup.moshi.Moshi;
 
 import java.lang.annotation.ElementType;
@@ -37,16 +36,9 @@ public class ViewModelModule {
 
     @Provides
     @IntoMap
-    @ViewModelKey(AppListViewModel.class)
-    ViewModel provideAppListViewModel(PreferenceRepository preferenceRepository, Moshi moshi) {
-        return new AppListViewModel(preferenceRepository, moshi);
-    }
-
-    @Provides
-    @IntoMap
-    @ViewModelKey(FavoritesViewModel.class)
-    ViewModel provideFavoritesViewModel(PreferenceRepository preferenceRepository, Moshi moshi) {
-        return new FavoritesViewModel(preferenceRepository, moshi);
+    @ViewModelKey(MainViewModel.class)
+    ViewModel provideMainViewModel(PreferenceRepository preferenceRepository, Moshi moshi) {
+        return new MainViewModel(preferenceRepository, moshi);
     }
 
 }
