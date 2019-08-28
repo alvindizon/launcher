@@ -13,13 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.application.MainActivity;
+import com.alvindizon.launcher.application.MainViewModel;
 import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.core.SaveStatus;
 import com.alvindizon.launcher.core.ViewModelFactory;
@@ -44,13 +45,13 @@ public class FavoritesFragment extends Fragment {
     @Inject
     public ViewModelFactory viewModelFactory;
 
-    private FavoritesViewModel viewModel;
+    private MainViewModel viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Injector.getViewModelComponent().inject(this);
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoritesViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel.class);
         packageManager = requireActivity().getPackageManager();
         viewModel.setPackageManager(packageManager);
         navController = ((MainActivity) requireActivity()).getNavController();

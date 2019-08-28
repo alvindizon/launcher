@@ -12,13 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.application.MainActivity;
+import com.alvindizon.launcher.application.MainViewModel;
 import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.core.SaveStatus;
 import com.alvindizon.launcher.core.ViewModelFactory;
@@ -43,13 +44,13 @@ public class AppListFragment extends Fragment{
     @Inject
     public ViewModelFactory viewModelFactory;
 
-    private AppListViewModel viewModel;
+    private MainViewModel viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Injector.getViewModelComponent().inject(this);
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(AppListViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel.class);
         viewModel.setPackageManager(requireActivity().getPackageManager());
         navController = ((MainActivity) requireActivity()).getNavController();
     }
@@ -63,7 +64,7 @@ public class AppListFragment extends Fragment{
             new OnBackPressedCallback(true) {
                 @Override
                 public void handleOnBackPressed() {
-                    viewModel.saveFaveAppList(faveAppList).observe(getViewLifecycleOwner(),
+                    viewModel.saveToExistingFaves(faveAppList).observe(getViewLifecycleOwner(),
                             status -> handleSaveStatus(status));
                 }
             });
@@ -91,7 +92,7 @@ public class AppListFragment extends Fragment{
     @Override
     public void onStart() {
         super.onStart();
-        viewModel.getAppList().observe(this, data -> {
+        viewModel.getLaunchableApps().observe(this, data -> {
             appList = data;
             appListAdapter.setAppList(appList);
             binding.progressBar.setVisibility(View.GONE);
