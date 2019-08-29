@@ -1,73 +1,121 @@
 package com.alvindizon.launcher.features.applist;
 
-import android.util.Log;
-import android.util.SparseBooleanArray;
+import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.R;
+import com.alvindizon.launcher.core.AppModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHolder> {
-    public static final String TAG = AppListAdapter.class.getSimpleName();
 
-    public interface AppItemListener {
-        void onItemClick(AppModel app);
-        void onItemUncheck(AppModel app);
+    public interface MultiSelectItemListener {
+        void onActionBarButtonClick(List<AppModel> newAppList);
     }
 
-    private List<AppModel> appList;
-    private AppItemListener onAppItemClickListener;
-    private SparseBooleanArray isCheckedArray = new SparseBooleanArray();
+    private List<AppModel> appList = new ArrayList<>();
+    private MultiSelectItemListener multiSelectItemListener;
+    private boolean multiSelect = false;
+    private List<AppModel> selectedItems = new ArrayList<>();
+    private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            multiSelect = true;
+            menu.add("Add");
+            return true;
+        }
 
-    public AppListAdapter(AppItemListener onAppItemClickListener) {
-        this.onAppItemClickListener = onAppItemClickListener;
-    }
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            appList.addAll(selectedItems);
+            if(multiSelectItemListener != null) {
+                multiSelectItemListener.onActionBarButtonClick(appList);
+            }
+            mode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            multiSelect = false;
+            selectedItems.clear();
+            notifyDataSetChanged();
+        }
+    };
 
     public void setAppList(List<AppModel> appList) {
         this.appList = appList;
+        notifyDataSetChanged();
+    }
+
+    public void setMultiSelectItemListener(MultiSelectItemListener multiSelectItemListener) {
+        this.multiSelectItemListener = multiSelectItemListener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView appIcon;
-        private final CheckedTextView appLabel;
+        private final TextView appLabel;
+        private final ConstraintLayout itemLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             appIcon = itemView.findViewById(R.id.app_icon);
             appLabel = itemView.findViewById(R.id.app_label);
+            itemLayout = itemView.findViewById(R.id.item_layout);
+        }
+
+        private void selectItem(AppModel app) {
+            if(multiSelect) {
+                if(selectedItems.contains(app)) {
+                    selectedItems.remove(app);
+                    itemLayout.setBackgroundColor(Color.WHITE);
+                } else {
+                    selectedItems.add(app);
+                    itemLayout.setBackgroundColor(Color.LTGRAY);
+                }
+            }
         }
 
         private void bind(AppModel app, int i) {
             appIcon.setImageDrawable(app.getLauncherIcon());
             appLabel.setText(app.getAppLabel());
-            appLabel.setChecked(isCheckedArray.get(i, false));
-//            this.itemView.setOnClickListener(v -> onAppItemClickListener.onItemClick(appList.get(i).getPackageName()));
-           this.itemView.setOnClickListener(v -> {
-               boolean isChecked = isCheckedArray.get(i, false);
 
-               // if current checkbox is not checked, set it to checked when user clicks, else do the reverse
-               // update the SparseBooleanArray item corresponding to the current checkbox
-               appLabel.setChecked(!isChecked);
-               isCheckedArray.put(i, !isChecked);
+            if(selectedItems.contains(app)) {
+                itemLayout.setBackgroundColor(Color.LTGRAY);
+            } else {
+                itemLayout.setBackgroundColor(Color.WHITE);
+            }
 
-               if(appLabel.isChecked()) {
-                   Log.d(TAG, "isChecked: " + app.getPackageName());
-                   onAppItemClickListener.onItemClick(app);
-               } else {
-                   Log.d(TAG, "!isChecked: " + app.getPackageName());
-                   onAppItemClickListener.onItemUncheck(app);
-               }
-           });
+            this.itemView.setOnClickListener(v ->{
+                if(multiSelect) {
+                    selectItem(app);
+                }
+            });
+            this.itemView.setOnLongClickListener(v -> {
+                ((AppCompatActivity) v.getContext()).startSupportActionMode(actionModeCallbacks);
+                selectItem(app);
+                return true;
+            });
         }
     }
 
@@ -75,7 +123,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
     @Override
     public AppListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_app, parent, false);
+                .inflate(R.layout.item_fave, parent, false);
 
         return new ViewHolder(itemView);
     }
@@ -90,4 +138,3 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
         return appList.size();
     }
 }
-

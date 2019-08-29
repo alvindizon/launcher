@@ -35,8 +35,6 @@ import javax.inject.Inject;
 public class AppListFragment extends Fragment{
     private static final String TAG = AppListFragment.class.getSimpleName();
     private List<AppModel> appList = new ArrayList<>();
-    private List<AppModel> faveAppList = new ArrayList<>();
-
     private AppListAdapter appListAdapter;
     private FragmentAppListBinding binding;
     private NavController navController;
@@ -64,22 +62,14 @@ public class AppListFragment extends Fragment{
             new OnBackPressedCallback(true) {
                 @Override
                 public void handleOnBackPressed() {
-                    viewModel.saveToExistingFaves(faveAppList).observe(getViewLifecycleOwner(),
-                            status -> handleSaveStatus(status));
+                    navController.navigate(R.id.action_app_list_dest_to_favorites_dest);
                 }
             });
 
-        appListAdapter = new AppListAdapter(new AppListAdapter.AppItemListener() {
-            @Override
-            public void onItemClick(AppModel app) {
-                faveAppList.add(app);
-            }
-
-            @Override
-            public void onItemUncheck(AppModel app) {
-                faveAppList.remove(app);
-            }
-        });
+        appListAdapter = new AppListAdapter();
+        appListAdapter.setMultiSelectItemListener(newAppList ->
+                viewModel.saveToExistingFaves(newAppList).observe(getViewLifecycleOwner(),
+                        this::handleSaveStatus));
 
         DividerItemDecoration itemDecorator = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(requireContext(), R.drawable.recycler_horizontal_bottom_border)));
@@ -107,7 +97,7 @@ public class AppListFragment extends Fragment{
                 break;
             case DONE:
                 Log.d(TAG, "handleSaveStatus: done");
-                navController.navigate(R.id.action_app_list_dest_to_favorites_dest);
+                Toast.makeText(requireContext(), R.string.prompt_save_success, Toast.LENGTH_LONG).show();
                 break;
             case ERROR:
                 Log.d(TAG, "handleSaveStatus: error");

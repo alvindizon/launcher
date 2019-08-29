@@ -6,4 +6,5 @@
     <string name="prompt_saving">Saving…</string>
     <string name="prompt_error">Error saving apps!</string>
     <string name="label_fave_apps">Favorite apps</string>
+    <string name="prompt_save_success">Favorite apps saved.</string>
 </resources>
