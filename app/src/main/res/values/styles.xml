@@ -7,6 +7,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionOverflowButtonStyle">@style/whiteDots</item>
+    </style>
+
+    <style name="whiteDots" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@android:color/white</item>
     </style>
 
 </resources>
