@@ -5,4 +5,5 @@
     <string name="label_remove_app">Remove app</string>
     <string name="prompt_saving">Saving…</string>
     <string name="prompt_error">Error saving apps!</string>
+    <string name="label_fave_apps">Favorite apps</string>
 </resources>
