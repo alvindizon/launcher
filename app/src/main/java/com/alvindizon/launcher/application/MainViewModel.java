@@ -139,9 +139,10 @@ public class MainViewModel extends ViewModel {
 
     private Completable saveFaveAppListToPrefs(List<AppModel> faveAppList) {
         return Completable.create(emitter -> {
-
             for(AppModel appModel : faveAppList) {
-                favePackageNameList.add(appModel.getPackageName());
+                if(!favePackageNameList.contains(appModel.getPackageName())) {
+                    favePackageNameList.add(appModel.getPackageName());
+                }
             }
             String faveAppListJson = "";
             try {
