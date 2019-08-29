@@ -185,7 +185,7 @@ public class MainViewModel extends ViewModel {
                 }
                 emitter.onSuccess(faveList);
             }  else {
-                emitter.tryOnError(new Exception("empty list"));
+                emitter.onSuccess(new ArrayList<>());
             }
         });
     }

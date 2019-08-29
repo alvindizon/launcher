@@ -98,9 +98,6 @@ public class FavoritesFragment extends Fragment {
         binding.rvNav.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvNav.addItemDecoration(itemDecorator);
         binding.rvNav.setAdapter(faveListAdapter);
-        Log.d(TAG, "onCreateView: done initial RV setup");
-        updateRecyclerView();
-
         viewModel.loadFaveAppList().observe(getViewLifecycleOwner(), list -> {
             faveList = list;
             faveListAdapter.swapItems(list);
@@ -111,7 +108,7 @@ public class FavoritesFragment extends Fragment {
     }
 
     private void updateRecyclerView() {
-        Log.d(TAG, "updateRecyclerView: start");
+        binding.progressBar.setVisibility(View.GONE);
         if(faveList.isEmpty()) {
             binding.button.setVisibility(View.VISIBLE);
             binding.frameFav.setVisibility(View.GONE);
