@@ -11,17 +11,16 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.application.MainActivity;
 import com.alvindizon.launcher.application.MainViewModel;
 import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.core.PreferenceRepository;
 import com.alvindizon.launcher.core.SaveStatus;
 import com.alvindizon.launcher.core.ViewModelFactory;
 import com.alvindizon.launcher.databinding.FragmentFavoritesBinding;
@@ -29,7 +28,6 @@ import com.alvindizon.launcher.di.Injector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -45,7 +43,11 @@ public class FavoritesFragment extends Fragment {
     @Inject
     public ViewModelFactory viewModelFactory;
 
+    @Inject
+    public PreferenceRepository preferenceRepository;
+
     private MainViewModel viewModel;
+    private GridLayoutManager layoutManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,18 +75,12 @@ public class FavoritesFragment extends Fragment {
         binding.button.setOnClickListener((v ->
                 navController.navigate(R.id.action_favorites_dest_to_app_list_dest)));
         binding.toolbar.inflateMenu(R.menu.menu_add_apps);
-        binding.toolbar.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.menu_disp_add_apps:
-                    navController.navigate(R.id.action_favorites_dest_to_app_list_dest);
-                    return true;
-                default:
-                    break;
-            }
-            return super.onOptionsItemSelected(item);
-        });
 
-        faveListAdapter = new FaveListAdapter(this::launchApp);
+        int spanCount = preferenceRepository.get(R.string.key_span_count, 1);
+        layoutManager = new GridLayoutManager(requireContext(), spanCount);
+        binding.rvNav.setLayoutManager(layoutManager);
+        faveListAdapter = new FaveListAdapter(this::launchApp, layoutManager);
+        binding.rvNav.setAdapter(faveListAdapter);
         faveListAdapter.setAppList(faveList);
 
         faveListAdapter.setOnDeleteItemListener(list -> {
@@ -93,15 +89,30 @@ public class FavoritesFragment extends Fragment {
             updateRecyclerView();
         });
 
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(requireContext(), R.drawable.recycler_horizontal_bottom_border)));
-        binding.rvNav.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.rvNav.addItemDecoration(itemDecorator);
-        binding.rvNav.setAdapter(faveListAdapter);
         viewModel.loadFaveAppList().observe(getViewLifecycleOwner(), list -> {
             faveList = list;
             faveListAdapter.swapItems(list);
             updateRecyclerView();
+        });
+
+        binding.toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_disp_add_apps:
+                    navController.navigate(R.id.action_favorites_dest_to_app_list_dest);
+                    return true;
+                case R.id.menu_switch_view:
+                    if(layoutManager.getSpanCount() == 1) {
+                        layoutManager.setSpanCount(3);
+                    } else {
+                        layoutManager.setSpanCount(1);
+                    }
+                    Log.d(TAG, "onCreateView: " + faveListAdapter.getItemCount());
+                    faveListAdapter.notifyItemRangeChanged(0, (faveListAdapter != null ? faveListAdapter.getItemCount() : 0));
+                    return true;
+                default:
+                    break;
+            }
+            return super.onOptionsItemSelected(item);
         });
 
         return binding.getRoot();
@@ -142,5 +153,20 @@ public class FavoritesFragment extends Fragment {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(faveListAdapter != null) {
+            layoutManager.setSpanCount(preferenceRepository.get(R.string.key_span_count, 1));
+            faveListAdapter.notifyItemRangeChanged(0, faveListAdapter.getItemCount());
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        preferenceRepository.set(R.string.key_span_count, layoutManager.getSpanCount());
     }
 }

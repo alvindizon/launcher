@@ -19,10 +19,6 @@ public class PreferenceRepository {
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public String get(int key, int defaultValue) {
-        return get(key, context.getString(defaultValue));
-    }
-
     public String get(int key, String defaultValue) {
         return sharedPreferences.getString(context.getResources().getString(key), defaultValue);
     }
@@ -33,5 +29,13 @@ public class PreferenceRepository {
 
     public void set(int key, String value) {
         sharedPreferences.edit().putString(context.getResources().getString(key), value).apply();
+    }
+
+    public void set(int key, int value) {
+        sharedPreferences.edit().putInt(context.getString(key), value).apply();
+    }
+
+    public int get(int key, int defaultValue) {
+        return sharedPreferences.getInt(context.getString(key), defaultValue);
     }
 }

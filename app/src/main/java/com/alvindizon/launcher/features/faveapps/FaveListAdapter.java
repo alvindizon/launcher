@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvindizon.launcher.R;
@@ -25,6 +26,8 @@ import java.util.List;
 
 public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHolder> {
 
+    private GridLayoutManager layoutManager;
+
     public interface FaveItemClickListener {
         void onItemClick(String packageName);
     }
@@ -32,6 +35,12 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
     public interface DeleteItemListener {
         void onDeleteClick(List<AppModel> newAppList);
     }
+
+    enum ViewType {
+        LIST,
+        GRID
+    }
+
 
     private List<AppModel> appList = new ArrayList<>();
     private FaveItemClickListener onFaveItemClickListener;
@@ -71,8 +80,9 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
         }
     };
 
-    public FaveListAdapter(FaveItemClickListener onFaveItemClickListener) {
+    public FaveListAdapter(FaveItemClickListener onFaveItemClickListener, GridLayoutManager layoutManager) {
         this.onFaveItemClickListener = onFaveItemClickListener;
+        this.layoutManager = layoutManager;
     }
 
     public void setAppList(List<AppModel> appList) {
@@ -137,9 +147,14 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
     @NonNull
     @Override
     public FaveListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_fave, parent, false);
-
+        View itemView;
+        if(viewType == ViewType.LIST.ordinal()) {
+            itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_fave, parent, false);
+        } else {
+            itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_fave_grid, parent, false);
+        }
         return new ViewHolder(itemView);
     }
 
@@ -159,5 +174,14 @@ public class FaveListAdapter extends RecyclerView.Adapter<FaveListAdapter.ViewHo
         this.appList.clear();
         this.appList.addAll(apps);
         diffResult.dispatchUpdatesTo(this);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(layoutManager.getSpanCount() == 1) {
+            return ViewType.LIST.ordinal();
+        } else {
+            return ViewType.GRID.ordinal();
+        }
     }
 }

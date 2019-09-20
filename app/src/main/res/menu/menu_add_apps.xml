@@ -10,4 +10,9 @@
         android:title="@string/label_add_fave_apps"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/menu_switch_view"
+        android:title="@string/label_switch_view"
+        app:showAsAction="never"/>
+
 </menu>
