@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.application.MainActivity;
@@ -72,8 +73,6 @@ public class FavoritesFragment extends Fragment {
                 }
             });
 
-        binding.button.setOnClickListener((v ->
-                navController.navigate(R.id.action_favorites_dest_to_app_list_dest)));
         binding.toolbar.inflateMenu(R.menu.menu_add_apps);
 
         int spanCount = preferenceRepository.get(R.string.key_span_count, 1);
@@ -96,24 +95,36 @@ public class FavoritesFragment extends Fragment {
         });
 
         binding.toolbar.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.menu_disp_add_apps:
-                    navController.navigate(R.id.action_favorites_dest_to_app_list_dest);
-                    return true;
-                case R.id.menu_switch_view:
-                    if(layoutManager.getSpanCount() == 1) {
-                        layoutManager.setSpanCount(3);
-                    } else {
-                        layoutManager.setSpanCount(1);
-                    }
-                    Log.d(TAG, "onCreateView: " + faveListAdapter.getItemCount());
-                    faveListAdapter.notifyItemRangeChanged(0, (faveListAdapter != null ? faveListAdapter.getItemCount() : 0));
-                    return true;
-                default:
-                    break;
+            if (item.getItemId() == R.id.menu_switch_view) {
+                if (layoutManager.getSpanCount() == 1) {
+                    layoutManager.setSpanCount(3);
+                } else {
+                    layoutManager.setSpanCount(1);
+                }
+                faveListAdapter.notifyItemRangeChanged(0, (faveListAdapter != null ? faveListAdapter.getItemCount() : 0));
+                return true;
             }
-            return super.onOptionsItemSelected(item);
+            return false;
         });
+
+        binding.rvNav.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if(newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    binding.fab.show();
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if(dy < 0 || dy > 0 && binding.fab.isShown()) {
+                    binding.fab.hide();
+                }
+            }
+        });
+
+        binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_favorites_dest_to_app_list_dest));
 
         return binding.getRoot();
     }
@@ -121,11 +132,11 @@ public class FavoritesFragment extends Fragment {
     private void updateRecyclerView() {
         binding.progressBar.setVisibility(View.GONE);
         if(faveList.isEmpty()) {
-            binding.button.setVisibility(View.VISIBLE);
-            binding.frameFav.setVisibility(View.GONE);
+            binding.emptyMsg.setVisibility(View.VISIBLE);
+            binding.rvNav.setVisibility(View.GONE);
         } else {
-            binding.button.setVisibility(View.GONE);
-            binding.frameFav.setVisibility(View.VISIBLE);
+            binding.emptyMsg.setVisibility(View.GONE);
+            binding.rvNav.setVisibility(View.VISIBLE);
         }
     }
 

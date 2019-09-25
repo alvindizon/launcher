@@ -29,8 +29,8 @@
                 android:textSize="18sp"/>
         </androidx.appcompat.widget.Toolbar>
 
-        <Button
-            android:id="@+id/button"
+        <TextView
+            android:id="@+id/empty_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_no_favs"
@@ -54,23 +54,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:id="@+id/frame_fav"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_nav"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_nav"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
 
-        </FrameLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_add"
+            android:focusable="true" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
