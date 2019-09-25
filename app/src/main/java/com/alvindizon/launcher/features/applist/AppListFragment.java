@@ -107,7 +107,7 @@ public class AppListFragment extends Fragment{
                 break;
             case DONE:
                 Log.d(TAG, "handleSaveStatus: done");
-                navController.navigate(R.id.action_app_list_dest_to_favorites_dest);
+                navController.navigateUp();
                 break;
             case ERROR:
                 Log.d(TAG, "handleSaveStatus: error");

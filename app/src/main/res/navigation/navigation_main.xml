@@ -9,9 +9,6 @@
         android:name="com.alvindizon.launcher.features.applist.AppListFragment"
         android:label="fragment_app_list"
         tools:layout="@layout/fragment_app_list">
-        <action
-            android:id="@+id/action_app_list_dest_to_favorites_dest"
-            app:destination="@id/favorites_dest" />
     </fragment>
     <fragment
         android:id="@+id/favorites_dest"
@@ -20,6 +17,10 @@
         tools:layout="@layout/fragment_favorites">
         <action
             android:id="@+id/action_favorites_dest_to_app_list_dest"
-            app:destination="@id/app_list_dest" />
+            app:destination="@id/app_list_dest"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"/>
     </fragment>
 </navigation>
