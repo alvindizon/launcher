@@ -96,7 +96,7 @@ public class AppListFragment extends Fragment{
             appList = data;
             appListAdapter.setAppList(appList);
             binding.progressBar.setVisibility(View.GONE);
-            binding.listContainer.setVisibility(View.VISIBLE);
+            binding.rvNav.setVisibility(View.VISIBLE);
         });
     }
 

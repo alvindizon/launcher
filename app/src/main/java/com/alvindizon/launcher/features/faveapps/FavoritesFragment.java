@@ -4,6 +4,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -64,7 +67,7 @@ public class FavoritesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentFavoritesBinding.inflate(inflater, container, false);
-
+        setHasOptionsMenu(true); // set to true in order for options menu to be inflated
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),
             new OnBackPressedCallback(true) {
                 @Override
@@ -72,8 +75,6 @@ public class FavoritesFragment extends Fragment {
                     // do nothing on back press
                 }
             });
-
-        binding.toolbar.inflateMenu(R.menu.menu_add_apps);
 
         int spanCount = preferenceRepository.get(R.string.key_span_count, 1);
         layoutManager = new GridLayoutManager(requireContext(), spanCount);
@@ -92,19 +93,6 @@ public class FavoritesFragment extends Fragment {
             faveList = list;
             faveListAdapter.swapItems(list);
             updateRecyclerView();
-        });
-
-        binding.toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.menu_switch_view) {
-                if (layoutManager.getSpanCount() == 1) {
-                    layoutManager.setSpanCount(3);
-                } else {
-                    layoutManager.setSpanCount(1);
-                }
-                faveListAdapter.notifyItemRangeChanged(0, (faveListAdapter != null ? faveListAdapter.getItemCount() : 0));
-                return true;
-            }
-            return false;
         });
 
         binding.rvNav.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -164,6 +152,25 @@ public class FavoritesFragment extends Fragment {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_add_apps, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.menu_switch_view) {
+            if (layoutManager.getSpanCount() == 1) {
+                layoutManager.setSpanCount(3);
+            } else {
+                layoutManager.setSpanCount(1);
+            }
+            faveListAdapter.notifyItemRangeChanged(0, (faveListAdapter != null ? faveListAdapter.getItemCount() : 0));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
