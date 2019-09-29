@@ -156,21 +156,29 @@ public class FavoritesFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_add_apps, menu);
+        inflater.inflate(R.menu.menu_favorite, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.menu_switch_view) {
-            if (layoutManager.getSpanCount() == 1) {
-                layoutManager.setSpanCount(3);
-            } else {
-                layoutManager.setSpanCount(1);
-            }
-            faveListAdapter.notifyItemRangeChanged(0, (faveListAdapter != null ? faveListAdapter.getItemCount() : 0));
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menu_switch_view:
+                if (layoutManager.getSpanCount() == 1) {
+                    layoutManager.setSpanCount(3);
+                } else {
+                    layoutManager.setSpanCount(1);
+                }
+                faveListAdapter.notifyItemRangeChanged(0, (faveListAdapter != null ? faveListAdapter.getItemCount() : 0));
+                return true;
+            case R.id.menu_clear_apps:
+                faveList.clear();
+                faveListAdapter.notifyDataSetChanged();
+                viewModel.saveFaveApps(faveList).observe(getViewLifecycleOwner(), this::handleSaveStatus);
+                updateRecyclerView();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

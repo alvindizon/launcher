@@ -7,4 +7,5 @@
     <string name="prompt_error">Error saving apps!</string>
     <string name="label_fave_apps">Favorite apps</string>
     <string name="label_switch_view">Switch view</string>
-</resources>
+    <string name="label_clear_all">Clear all apps</string>
+    </resources>

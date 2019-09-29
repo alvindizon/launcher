@@ -10,4 +10,8 @@
         android:title="@string/label_switch_view"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/menu_clear_apps"
+        android:title="@string/label_clear_all"
+        app:showAsAction="never"/>
 </menu>
