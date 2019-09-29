@@ -5,14 +5,15 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.R;
+import com.alvindizon.launcher.core.AppModel;
 
 import java.util.List;
 
@@ -39,35 +40,30 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView appIcon;
-        private final CheckedTextView appLabel;
+        private final TextView appLabel;
+        private final CheckBox appCheckBox;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             appIcon = itemView.findViewById(R.id.app_icon);
             appLabel = itemView.findViewById(R.id.app_label);
+            appCheckBox = itemView.findViewById(R.id.check_box);
         }
 
         private void bind(AppModel app, int i) {
             appIcon.setImageDrawable(app.getLauncherIcon());
             appLabel.setText(app.getAppLabel());
-            appLabel.setChecked(isCheckedArray.get(i, false));
-//            this.itemView.setOnClickListener(v -> onAppItemClickListener.onItemClick(appList.get(i).getPackageName()));
-           this.itemView.setOnClickListener(v -> {
-               boolean isChecked = isCheckedArray.get(i, false);
-
-               // if current checkbox is not checked, set it to checked when user clicks, else do the reverse
-               // update the SparseBooleanArray item corresponding to the current checkbox
-               appLabel.setChecked(!isChecked);
-               isCheckedArray.put(i, !isChecked);
-
-               if(appLabel.isChecked()) {
-                   Log.d(TAG, "isChecked: " + app.getPackageName());
-                   onAppItemClickListener.onItemClick(app);
-               } else {
-                   Log.d(TAG, "!isChecked: " + app.getPackageName());
-                   onAppItemClickListener.onItemUncheck(app);
-               }
-           });
+            appCheckBox.setChecked(isCheckedArray.get(i, false));
+            appCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                isCheckedArray.put(i, isChecked);
+                if(isChecked) {
+                    Log.d(TAG, "isChecked: " + app.getPackageName());
+                    onAppItemClickListener.onItemClick(app);
+                } else {
+                    Log.d(TAG, "!isChecked: " + app.getPackageName());
+                    onAppItemClickListener.onItemUncheck(app);
+                }
+            });
         }
     }
 

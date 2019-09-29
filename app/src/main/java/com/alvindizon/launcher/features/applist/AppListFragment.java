@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.application.MainActivity;
@@ -64,8 +65,7 @@ public class AppListFragment extends Fragment{
             new OnBackPressedCallback(true) {
                 @Override
                 public void handleOnBackPressed() {
-                    viewModel.saveToExistingFaves(faveAppList).observe(getViewLifecycleOwner(),
-                            status -> handleSaveStatus(status));
+                    navController.navigateUp();
                 }
             });
 
@@ -86,6 +86,26 @@ public class AppListFragment extends Fragment{
         binding.rvNav.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvNav.addItemDecoration(itemDecorator);
         binding.rvNav.setAdapter(appListAdapter);
+
+        binding.rvNav.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if(newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    binding.fab.show();
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if(dy < 0 || dy > 0 && binding.fab.isShown()) {
+                    binding.fab.hide();
+                }
+            }
+        });
+
+        binding.fab.setOnClickListener(v ->
+                viewModel.saveToExistingFaves(faveAppList).observe(getViewLifecycleOwner(), this::handleSaveStatus));
         return binding.getRoot();
     }
 
@@ -107,6 +127,7 @@ public class AppListFragment extends Fragment{
                 break;
             case DONE:
                 Log.d(TAG, "handleSaveStatus: done");
+                Toast.makeText(requireContext(), R.string.prompt_saved, Toast.LENGTH_SHORT).show();
                 navController.navigateUp();
                 break;
             case ERROR:
