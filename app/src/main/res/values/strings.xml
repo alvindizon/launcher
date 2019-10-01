@@ -9,4 +9,7 @@
     <string name="label_switch_view">Switch view</string>
     <string name="label_clear_all">Clear all apps</string>
     <string name="prompt_saved">Apps saved.</string>
+    <string name="label_goto_test_view">Display drag and drop view</string>
+    <string name="label_switch_to_grid">Switch to grid view</string>
+    <string name="label_switch_to_vertical">Switch to list view</string>
 </resources>

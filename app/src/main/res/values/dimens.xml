@@ -2,4 +2,6 @@
 <resources>
     <dimen name="item_height">56dp</dimen>
     <dimen name="item_icon_dimen">40dp</dimen>
+    <dimen name="dimen_grid_item_width">100dp</dimen>
+    <dimen name="dimen_grid_item_height">100dp</dimen>
 </resources>

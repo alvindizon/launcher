@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
 
 import com.alvindizon.launcher.R;
+import com.alvindizon.launcher.core.PreferenceRepository;
 import com.alvindizon.launcher.core.ViewModelFactory;
 import com.alvindizon.launcher.databinding.ActivityMainBinding;
 import com.alvindizon.launcher.di.Injector;
@@ -22,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject
     ViewModelFactory viewModelFactory;
+
+    @Inject
+    PreferenceRepository preferenceRepository;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,13 +37,29 @@ public class MainActivity extends AppCompatActivity {
         Injector.getViewModelComponent().inject(this);
         viewModel = new ViewModelProvider(this, viewModelFactory).get(MainViewModel.class);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        // determine whether to start using list or grid fragment
+        // by obtaining last used orientation from shared prefs
+        NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.navigation_main);
+        if(preferenceRepository.get(R.string.key_is_list, true)) {
+            navGraph.setStartDestination(R.id.vertical_list_dest);
+        } else {
+            navGraph.setStartDestination(R.id.grid_list_dest);
+        }
+        navController.setGraph(navGraph);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if(destination.getId() == R.id.favorites_dest) {
-                binding.toolbarTitle.setText(R.string.label_fave_apps);
-            } else if(destination.getId() == R.id.app_list_dest) {
+            if(destination.getId() == R.id.app_list_dest) {
                 binding.toolbarTitle.setText(R.string.label_add_fave_apps);
+            } else {
+                binding.toolbarTitle.setText(R.string.label_fave_apps);
             }
         });
+
     }
 
     public NavController getNavController() {

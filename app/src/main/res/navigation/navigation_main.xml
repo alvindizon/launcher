@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation_main.xml"
-    app:startDestination="@id/favorites_dest"
     xmlns:tools="http://schemas.android.com/tools">
 
     <fragment
@@ -11,12 +10,39 @@
         tools:layout="@layout/fragment_app_list">
     </fragment>
     <fragment
-        android:id="@+id/favorites_dest"
-        android:name="com.alvindizon.launcher.features.faveapps.FavoritesFragment"
-        android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites">
+        android:id="@+id/vertical_list_dest"
+        android:name="com.alvindizon.launcher.features.favorites.VerticalListFragment"
+        android:label="fragment_vertical_list"
+        tools:layout="@layout/fragment_vertical_list">
         <action
-            android:id="@+id/action_favorites_dest_to_app_list_dest"
+            android:id="@+id/action_vertical_list_dest_to_grid_list_dest"
+            app:destination="@id/grid_list_dest"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_vertical_list_dest_to_app_list_dest"
+            app:destination="@id/app_list_dest"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"/>
+    </fragment>
+    <fragment
+        android:id="@+id/grid_list_dest"
+        android:name="com.alvindizon.launcher.features.favorites.GridListFragment"
+        android:label="fragment_grid_list"
+        tools:layout="@layout/fragment_grid_list">
+        <action
+            android:id="@+id/action_grid_list_dest_to_vertical_list_dest"
+            app:destination="@id/vertical_list_dest"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_grid_list_dest_to_app_list_dest"
             app:destination="@id/app_list_dest"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"

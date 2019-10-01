@@ -2,17 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="110dp"
-    android:layout_height="144dp"
+    android:layout_width="@dimen/dimen_grid_item_width"
+    android:layout_height="@dimen/dimen_grid_item_height"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/item_layout">
+    android:id="@+id/item_layout"
+    android:background="@color/listItemBackground"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/app_icon"
         android:layout_width="0dp"
         android:layout_height="@dimen/item_icon_dimen"
         android:layout_gravity="center"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -23,10 +25,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:textAlignment="center"
+        android:ellipsize="end"
+        android:maxLines="1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/app_icon"
         tools:text="Loyalty App" />

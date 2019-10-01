@@ -23,7 +23,7 @@ public class PreferenceRepository {
         return sharedPreferences.getString(context.getResources().getString(key), defaultValue);
     }
 
-    private boolean get(int key, boolean defaultValue) {
+    public boolean get(int key, boolean defaultValue) {
         return sharedPreferences.getBoolean(context.getResources().getString(key), defaultValue);
     }
 
@@ -33,6 +33,10 @@ public class PreferenceRepository {
 
     public void set(int key, int value) {
         sharedPreferences.edit().putInt(context.getString(key), value).apply();
+    }
+
+    public void set(int key, boolean value) {
+        sharedPreferences.edit().putBoolean(context.getString(key), value).apply();
     }
 
     public int get(int key, int defaultValue) {

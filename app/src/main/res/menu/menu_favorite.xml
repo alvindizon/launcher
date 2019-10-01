@@ -11,7 +11,17 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/menu_switch_to_grid"
+        android:title="@string/label_switch_to_grid"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/menu_clear_apps"
         android:title="@string/label_clear_all"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_test_view"
+        android:title="@string/label_goto_test_view"
         app:showAsAction="never"/>
 </menu>

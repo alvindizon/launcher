@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#104974</color>
     <color name="colorAccent">#D81B60</color>
     <color name="dark">#2D2D2D</color>
+    <color name="divider">#e1e1e1</color>
+    <color name="listItemBackground">#ffffff</color>
+    <color name="listBackground">#ffffff</color>
 </resources>
