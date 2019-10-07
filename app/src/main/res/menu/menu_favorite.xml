@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".features.faveapps.FavoritesFragment">
-
-    <item
-        android:id="@+id/menu_switch_view"
-        android:title="@string/label_switch_view"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/menu_switch_to_grid"
-        android:title="@string/label_switch_to_grid"
-        app:showAsAction="never"/>
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_clear_apps"
@@ -21,7 +9,13 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/menu_test_view"
-        android:title="@string/label_goto_test_view"
+        android:id="@+id/menu_switch_to_vertical"
+        android:title="@string/label_switch_to_vertical"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_switch_to_grid"
+        android:title="@string/label_switch_to_grid"
+        app:showAsAction="never"/>
+
 </menu>

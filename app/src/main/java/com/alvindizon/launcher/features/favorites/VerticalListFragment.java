@@ -143,7 +143,15 @@ public class VerticalListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_vertical, menu);
+        inflater.inflate(R.menu.menu_favorite, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        if(this.getClass() == VerticalListFragment.class) {
+            menu.findItem(R.id.menu_switch_to_vertical).setVisible(false);
+        }
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
