@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: "androidx.navigation.safeargs"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.alvindizon.launcher"
         minSdkVersion 22
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -39,8 +39,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
 
     // navigation component
-    implementation "androidx.navigation:navigation-fragment:2.2.0-alpha03"
-    implementation "androidx.navigation:navigation-ui:2.2.0-alpha03"
+    implementation "androidx.navigation:navigation-fragment:2.2.0-beta01"
+    implementation "androidx.navigation:navigation-ui:2.2.0-beta01"
 
     // serialization of objects
     implementation 'com.squareup.moshi:moshi:1.8.0'
@@ -50,9 +50,9 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
 
     // Lifecycle libs
-    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-alpha04'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha04'
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha04'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-beta01'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-beta01'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0-beta01'
 
     // RxJava2
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
