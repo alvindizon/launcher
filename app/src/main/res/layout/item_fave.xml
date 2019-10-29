@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/item_height"
+    android:layout_height="@dimen/vert_item_height"
     android:id="@+id/item_layout"
     android:background="@color/listItemBackground"
     android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/app_icon"
-        android:layout_width="@dimen/item_icon_dimen"
-        android:layout_height="@dimen/item_icon_dimen"
+        android:layout_width="@dimen/vert_item_icon_dimen"
+        android:layout_height="@dimen/vert_item_icon_dimen"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="16dp"
@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

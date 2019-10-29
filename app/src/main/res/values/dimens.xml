@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="item_height">56dp</dimen>
-    <dimen name="item_icon_dimen">40dp</dimen>
-    <dimen name="dimen_grid_item_width">100dp</dimen>
-    <dimen name="dimen_grid_item_height">100dp</dimen>
+    <dimen name="applistitem_height">56dp</dimen>
+    <dimen name="vert_item_height">66dp</dimen>
+    <dimen name="vert_item_icon_dimen">50dp</dimen>
+    <dimen name="grid_item_icon_dimen">65dp</dimen>
+    <dimen name="applistitem_icon_dimen">40dp</dimen>
+    <dimen name="dimen_grid_item_width">120dp</dimen>
+    <dimen name="dimen_grid_item_height">120dp</dimen>
+    <dimen name="loading_dialog_width">270dp</dimen>
+    <dimen name="loading_dialog_height">252dp</dimen>
 </resources>

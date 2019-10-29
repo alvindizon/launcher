@@ -38,6 +38,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.alvindizon.launcher.core.Const.GRID_SPAN_CNT;
+
 public class GridListFragment extends Fragment {
     private static final String TAG = GridListFragment.class.getSimpleName();
 
@@ -117,7 +119,7 @@ public class GridListFragment extends Fragment {
         binding.rv.setDragListener(onItemDragListener);
 
         // setup layout manager
-        binding.rv.setLayoutManager(new GridLayoutManager(requireContext(), 4));
+        binding.rv.setLayoutManager(new GridLayoutManager(requireContext(), GRID_SPAN_CNT));
 
         // setup rv orientation
         binding.rv.setOrientation(DragDropSwipeRecyclerView.ListOrientation.GRID_LIST_WITH_HORIZONTAL_SWIPING);

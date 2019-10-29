@@ -12,7 +12,7 @@
     <ImageView
         android:id="@+id/app_icon"
         android:layout_width="0dp"
-        android:layout_height="@dimen/item_icon_dimen"
+        android:layout_height="@dimen/grid_item_icon_dimen"
         android:layout_gravity="center"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,6 +29,7 @@
         android:textAlignment="center"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
