@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModel;
 import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.core.Const;
-import com.alvindizon.launcher.core.PreferenceRepository;
+import com.alvindizon.launcher.core.PreferenceHelper;
 import com.alvindizon.launcher.core.SaveStatus;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -34,15 +34,15 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainViewModel extends ViewModel {
 
-    private final PreferenceRepository preferenceRepository;
+    private final PreferenceHelper preferenceHelper;
     private JsonAdapter<List<String>> jsonAdapter;
     private List<String> favePackageNameList = new ArrayList<>();
     private PackageManager packageManager;
     private CompositeDisposable compositeDisposable;
 
     @Inject
-    public MainViewModel(PreferenceRepository preferenceRepository, Moshi moshi) {
-        this.preferenceRepository = preferenceRepository;
+    public MainViewModel(PreferenceHelper preferenceHelper, Moshi moshi) {
+        this.preferenceHelper = preferenceHelper;
         this.compositeDisposable = new CompositeDisposable();
         jsonAdapter = moshi.adapter(Types.newParameterizedType(List.class, String.class));
     }
@@ -123,7 +123,7 @@ public class MainViewModel extends ViewModel {
 
     private Completable saveToExistingList(List<AppModel> faveAppList) {
         return Completable.create(emitter -> {
-            String faveAppListJsonString = preferenceRepository.get(R.string.key_fave_list, "");
+            String faveAppListJsonString = preferenceHelper.get(R.string.key_fave_list, "");
             // get existing fave list if it exists
             if (!TextUtils.isEmpty(faveAppListJsonString)) {
                 try {
@@ -151,14 +151,14 @@ public class MainViewModel extends ViewModel {
                 e.printStackTrace();
                 emitter.tryOnError(e);
             }
-            preferenceRepository.set(R.string.key_fave_list, faveAppListJson);
+            preferenceHelper.set(R.string.key_fave_list, faveAppListJson);
             emitter.onComplete();
         });
     }
 
     private Single<List<AppModel>> loadSavedFavoriteApps() {
         return Single.create(emitter -> {
-            String faveAppListJsonString = preferenceRepository.get(R.string.key_fave_list, "");
+            String faveAppListJsonString = preferenceHelper.get(R.string.key_fave_list, "");
             // use new list every time app list is loaded from prefs to prevent duplicates
             List<AppModel> faveList = new ArrayList<>();
             if (!TextUtils.isEmpty(faveAppListJsonString)) {

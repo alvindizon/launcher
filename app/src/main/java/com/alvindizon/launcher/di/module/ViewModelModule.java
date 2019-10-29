@@ -3,7 +3,7 @@ package com.alvindizon.launcher.di.module;
 import androidx.lifecycle.ViewModel;
 
 import com.alvindizon.launcher.application.MainViewModel;
-import com.alvindizon.launcher.core.PreferenceRepository;
+import com.alvindizon.launcher.core.PreferenceHelper;
 import com.alvindizon.launcher.core.ViewModelFactory;
 import com.squareup.moshi.Moshi;
 
@@ -37,8 +37,9 @@ public class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(MainViewModel.class)
-    ViewModel provideMainViewModel(PreferenceRepository preferenceRepository, Moshi moshi) {
-        return new MainViewModel(preferenceRepository, moshi);
+    ViewModel provideMainViewModel(PreferenceHelper preferenceHelper,
+                                   Moshi moshi) {
+        return new MainViewModel(preferenceHelper, moshi);
     }
 
 }

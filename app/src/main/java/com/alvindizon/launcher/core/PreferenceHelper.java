@@ -8,13 +8,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class PreferenceRepository {
+public class PreferenceHelper {
 
     private final SharedPreferences sharedPreferences;
     private final Context context;
 
     @Inject
-    public PreferenceRepository(Context context) {
+    public PreferenceHelper(Context context) {
         this.context = context;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }

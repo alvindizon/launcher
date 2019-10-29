@@ -24,7 +24,7 @@ import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.application.MainActivity;
 import com.alvindizon.launcher.application.MainViewModel;
 import com.alvindizon.launcher.core.AppModel;
-import com.alvindizon.launcher.core.PreferenceRepository;
+import com.alvindizon.launcher.core.PreferenceHelper;
 import com.alvindizon.launcher.core.SaveStatus;
 import com.alvindizon.launcher.core.ViewModelFactory;
 import com.alvindizon.launcher.databinding.FragmentGridListBinding;
@@ -47,7 +47,7 @@ public class GridListFragment extends Fragment {
     public ViewModelFactory viewModelFactory;
 
     @Inject
-    public PreferenceRepository preferenceRepository;
+    public PreferenceHelper preferenceHelper;
 
     private FragmentGridListBinding binding;
     private List<AppModel> faveList = new ArrayList<>();
@@ -178,7 +178,7 @@ public class GridListFragment extends Fragment {
 
     @Override
     public void onStop() {
-        preferenceRepository.set(R.string.key_is_list, false);
+        preferenceHelper.set(R.string.key_is_list, false);
         super.onStop();
     }
 
