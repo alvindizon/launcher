@@ -4,51 +4,60 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.core.Const;
-import com.alvindizon.launcher.core.PreferenceHelper;
 import com.alvindizon.launcher.core.SaveStatus;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Types;
+import com.alvindizon.launcher.data.FaveAppRecord;
+import com.alvindizon.launcher.data.FaveAppRepository;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainViewModel extends ViewModel {
+    private static final String TAG = MainViewModel.class.getSimpleName();
 
-    private final PreferenceHelper preferenceHelper;
-    private JsonAdapter<List<String>> jsonAdapter;
-    private List<String> favePackageNameList = new ArrayList<>();
+    private final FaveAppRepository faveAppRepository;
+
     private PackageManager packageManager;
     private CompositeDisposable compositeDisposable;
+    private List<AppModel> faveList = new ArrayList<>();
 
     @Inject
-    public MainViewModel(PreferenceHelper preferenceHelper, Moshi moshi) {
-        this.preferenceHelper = preferenceHelper;
+    public MainViewModel(FaveAppRepository faveAppRepository) {
+        this.faveAppRepository = faveAppRepository;
         this.compositeDisposable = new CompositeDisposable();
-        jsonAdapter = moshi.adapter(Types.newParameterizedType(List.class, String.class));
     }
 
     public void setPackageManager(PackageManager packageManager) {
         this.packageManager = packageManager;
+    }
+
+    public void setFaveList(List<AppModel> newList) {
+        faveList = newList;
+    }
+
+    public void reorderAppList(AppModel appModel, int position) {
+        faveList.remove(appModel);
+        faveList.add(position, appModel);
+    }
+
+    public List<AppModel> getFaveList() {
+        return faveList;
     }
 
     public LiveData<List<AppModel>> getLaunchableApps() {
@@ -60,10 +69,16 @@ public class MainViewModel extends ViewModel {
         return appListData;
     }
 
-    public LiveData<SaveStatus> saveFaveApps(List<AppModel> faveList) {
+    public LiveData<SaveStatus> saveFaveApps() {
         MutableLiveData<SaveStatus> saveStatus = new MutableLiveData<>();
-        favePackageNameList.clear();
-        compositeDisposable.add(saveFaveAppListToPrefs(faveList)
+        compositeDisposable.add(
+            faveAppRepository.clearFaveAppDb()
+            .andThen(Observable.fromIterable(faveList)
+                .flatMapCompletable(appModel -> faveAppRepository.createRecordCompletable(
+                        new FaveAppRecord(appModel.getPackageName(), appModel.getAppLabel())
+                    )
+                )
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe(disposable -> saveStatus.setValue(SaveStatus.SAVING))
@@ -71,37 +86,49 @@ public class MainViewModel extends ViewModel {
                 error -> {
                     error.printStackTrace();
                     saveStatus.setValue(SaveStatus.ERROR);
-                })
-        );
-        return saveStatus;
-    }
-
-    public LiveData<SaveStatus> saveToExistingFaves(List<AppModel> faveList) {
-        MutableLiveData<SaveStatus> saveStatus = new MutableLiveData<>();
-        compositeDisposable.add(saveToExistingList(faveList)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> saveStatus.setValue(SaveStatus.SAVING))
-                .subscribe(() -> saveStatus.setValue(SaveStatus.DONE),
-                        error -> {
-                            error.printStackTrace();
-                            saveStatus.setValue(SaveStatus.ERROR);
-                        })
+                }
+            )
         );
         return saveStatus;
     }
 
     public LiveData<List<AppModel>> loadFaveAppList() {
         MutableLiveData<List<AppModel>> listData = new MutableLiveData<>();
-        compositeDisposable.add(loadSavedFavoriteApps()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(listData::setValue, error -> {
-                    error.printStackTrace();
-                    listData.setValue(new ArrayList<>());
-                }));
-
+        compositeDisposable.add(faveAppRepository.getFaveApps()
+            .defaultIfEmpty(new ArrayList<>())
+            .flatMapSingle(this::loadSavedFavoriteApps)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(listData::setValue, Throwable::printStackTrace));
         return listData;
+    }
+
+    public void deleteRecord(AppModel appModel) {
+        compositeDisposable.add(faveAppRepository.deleteRecordByName(appModel.getPackageName())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(() -> faveList.remove(appModel), Throwable::printStackTrace)
+        );
+    }
+
+    public void clearFaveApps() {
+        compositeDisposable.add(faveAppRepository.clearFaveAppDb()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(() -> {
+                faveList.clear();
+            }, Throwable::printStackTrace)
+        );
+    }
+
+    public void addFaveApp(AppModel app) {
+        compositeDisposable.add(faveAppRepository.createRecordCompletable(
+                new FaveAppRecord(app.getPackageName(), app.getAppLabel())
+            )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(() -> Log.d(TAG, "addFaveApp: success"), Throwable::printStackTrace)
+        );
     }
 
     private Single<List<AppModel>> getLaunchableList() {
@@ -125,70 +152,24 @@ public class MainViewModel extends ViewModel {
         });
     }
 
-    private Completable saveToExistingList(List<AppModel> faveAppList) {
-        return Completable.create(emitter -> {
-            String faveAppListJsonString = preferenceHelper.get(R.string.key_fave_list, "");
-            // get existing fave list if it exists
-            if (!TextUtils.isEmpty(faveAppListJsonString)) {
-                try {
-                    favePackageNameList = jsonAdapter.fromJson(faveAppListJsonString);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    emitter.tryOnError(e);
-                }
-            }
-            emitter.onComplete();
-        }).andThen(saveFaveAppListToPrefs(faveAppList));
-    }
-
-    private Completable saveFaveAppListToPrefs(List<AppModel> faveAppList) {
-        return Completable.create(emitter -> {
-            for(AppModel appModel : faveAppList) {
-                if(!favePackageNameList.contains(appModel.getPackageName())) {
-                    favePackageNameList.add(appModel.getPackageName());
-                }
-            }
-            String faveAppListJson = "";
-            try {
-                faveAppListJson = jsonAdapter.toJson(favePackageNameList);
-            } catch (Exception e) {
-                e.printStackTrace();
-                emitter.tryOnError(e);
-            }
-            preferenceHelper.set(R.string.key_fave_list, faveAppListJson);
-            emitter.onComplete();
-        });
-    }
-
-    private Single<List<AppModel>> loadSavedFavoriteApps() {
+    private Single<List<AppModel>> loadSavedFavoriteApps(List<FaveAppRecord> faveAppRecords) {
         return Single.create(emitter -> {
-            String faveAppListJsonString = preferenceHelper.get(R.string.key_fave_list, "");
-            // use new list every time app list is loaded from prefs to prevent duplicates
             List<AppModel> faveList = new ArrayList<>();
-            if (!TextUtils.isEmpty(faveAppListJsonString)) {
-                try {
-                    favePackageNameList = jsonAdapter.fromJson(faveAppListJsonString);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    emitter.tryOnError(e);
-                }
-            }
-            // transform favePackageNameList to appmodels
-            if (favePackageNameList != null && !favePackageNameList.isEmpty()) {
-                for (String packageName : favePackageNameList) {
-                    ApplicationInfo appInfo;
+            if(!faveAppRecords.isEmpty()) {
+                // transform favorites retrieved from DB to appmodels that will be used in the UI
+                for (FaveAppRecord faveAppRecord : faveAppRecords) {
+                    ApplicationInfo appInfo = null;
                     try {
-                        // check if list contains already uninstalled apps
-                        appInfo = packageManager.getApplicationInfo(packageName, 0);
+                        appInfo = packageManager.getApplicationInfo(faveAppRecord.getPackageName(), 0);
                         faveList.add(new AppModel(appInfo.packageName,
                                 packageManager.getApplicationLabel(appInfo).toString(),
                                 packageManager.getApplicationIcon(appInfo)));
-                    } catch (Exception e) {
+                    } catch (PackageManager.NameNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
                 emitter.onSuccess(faveList);
-            }  else {
+            } else {
                 emitter.onSuccess(new ArrayList<>());
             }
         });

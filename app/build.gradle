@@ -61,4 +61,9 @@ dependencies {
 
     // Drag and Drop RecyclerView
     implementation 'com.ernestoyaquello.dragdropswiperecyclerview:drag-drop-swipe-recyclerview:0.6.0'
+
+    //Room
+    implementation 'androidx.room:room-runtime:2.2.3'
+    implementation 'androidx.room:room-rxjava2:2.2.3'
+    annotationProcessor 'androidx.room:room-compiler:2.2.3'
 }
