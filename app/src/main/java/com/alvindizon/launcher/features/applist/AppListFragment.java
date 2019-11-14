@@ -33,7 +33,6 @@ import javax.inject.Inject;
 public class AppListFragment extends Fragment{
     private static final String TAG = AppListFragment.class.getSimpleName();
     private List<AppModel> appList = new ArrayList<>();
-    private List<AppModel> faveAppList = new ArrayList<>();
 
     private AppListAdapter appListAdapter;
     private FragmentAppListBinding binding;
@@ -69,13 +68,12 @@ public class AppListFragment extends Fragment{
         appListAdapter = new AppListAdapter(new AppListAdapter.AppItemListener() {
             @Override
             public void onItemClick(AppModel app) {
-                faveAppList.add(app);
+                // actual saving app to DB happens here, not on FAB click
+                viewModel.addFaveApp(app);
             }
 
             @Override
-            public void onItemUncheck(AppModel app) {
-                faveAppList.remove(app);
-            }
+            public void onItemUncheck(AppModel app) {}
         });
 
         binding.rvNav.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -98,8 +96,7 @@ public class AppListFragment extends Fragment{
             }
         });
 
-        binding.fab.setOnClickListener(v ->
-                viewModel.saveToExistingFaves(faveAppList).observe(getViewLifecycleOwner(), this::handleSaveStatus));
+        binding.fab.setOnClickListener(v -> navController.navigateUp());
         return binding.getRoot();
     }
 

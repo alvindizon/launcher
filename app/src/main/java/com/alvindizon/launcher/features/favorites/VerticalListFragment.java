@@ -48,7 +48,6 @@ public class VerticalListFragment extends Fragment {
     public PreferenceHelper preferenceHelper;
 
     private FragmentVerticalListBinding binding;
-    private List<AppModel> faveList = new ArrayList<>();
     private NavController navController;
     private PackageManager packageManager;
     private MainViewModel viewModel;
@@ -75,10 +74,8 @@ public class VerticalListFragment extends Fragment {
         public void onItemDropped(int initialPosition, int finalPosition, AppModel appModel) {
             if(initialPosition != finalPosition) {
                 Log.d(TAG, appModel.getAppLabel() + " moved from position " + initialPosition + " to " + finalPosition);
-                if(faveList.contains(appModel)) {
-                    faveList.remove(appModel);
-                    faveList.add(finalPosition, appModel);
-                    viewModel.saveFaveApps(faveList).observe(getViewLifecycleOwner(), status -> handleSaveStatus(status));
+                if(viewModel.getFaveList().contains(appModel)) {
+                    viewModel.reorderAppList(appModel, finalPosition);
                     favoritesAdapter.notifyItemMoved(initialPosition, finalPosition);
                     favoritesAdapter.notifyDataSetChanged();
                 }
@@ -87,10 +84,9 @@ public class VerticalListFragment extends Fragment {
     };
 
     private void onSwipe(AppModel appModel, int position) {
-        if(faveList.contains(appModel)) {
+        if(viewModel.getFaveList().contains(appModel)) {
             Log.d(TAG, "onSwipe: " + appModel.getAppLabel() + " removed!");
-            faveList.remove(appModel);
-            viewModel.saveFaveApps(faveList).observe(getViewLifecycleOwner(), this::handleSaveStatus);
+            viewModel.deleteRecord(appModel);
             favoritesAdapter.notifyDataSetChanged();
             updateRecyclerView();
         }
@@ -111,7 +107,7 @@ public class VerticalListFragment extends Fragment {
         binding = FragmentVerticalListBinding.inflate(inflater, container, false);
         navController = ((MainActivity) requireActivity()).getNavController();
         setHasOptionsMenu(true);
-        favoritesAdapter = new FavoritesAdapter(faveList, this::launchApp);
+        favoritesAdapter = new FavoritesAdapter(new ArrayList<>(), this::launchApp);
         binding.rv.setAdapter(favoritesAdapter);
         binding.rv.setSwipeListener(onItemSwipeListener);
         binding.rv.setDragListener(onItemDragListener);
@@ -158,9 +154,8 @@ public class VerticalListFragment extends Fragment {
                 navController.navigate(R.id.action_vertical_list_dest_to_grid_list_dest);
                 return true;
             case R.id.menu_clear_apps:
-                faveList.clear();
                 favoritesAdapter.notifyDataSetChanged();
-                viewModel.saveFaveApps(faveList).observe(getViewLifecycleOwner(), this::handleSaveStatus);
+                viewModel.clearFaveApps();
                 updateRecyclerView();
                 return true;
             default:
@@ -173,7 +168,10 @@ public class VerticalListFragment extends Fragment {
         super.onResume();
         // load favorite apps here so that list is refreshed whenever an app is uninstalled
         viewModel.loadFaveAppList().observe(getViewLifecycleOwner(), list -> {
-            faveList = list;
+            for(AppModel appModel : list) {
+                Log.d(TAG, appModel.toString());
+            }
+            viewModel.setFaveList(list);
             favoritesAdapter.setDataSet(list);
             updateRecyclerView();
         });
@@ -182,6 +180,7 @@ public class VerticalListFragment extends Fragment {
     @Override
     public void onStop() {
         preferenceHelper.set(R.string.key_is_list, true);
+        viewModel.saveFaveApps().observe(getViewLifecycleOwner(), status -> handleSaveStatus(status));
         super.onStop();
     }
 
@@ -204,7 +203,7 @@ public class VerticalListFragment extends Fragment {
 
     private void updateRecyclerView() {
         binding.loadingIndicator.setVisibility(View.GONE);
-        if(faveList.isEmpty()) {
+        if(viewModel.getFaveList().isEmpty()) {
             binding.emptyMsg.setVisibility(View.VISIBLE);
             binding.rv.setVisibility(View.GONE);
         } else {
