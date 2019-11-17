@@ -96,7 +96,11 @@ public class MainViewModel extends ViewModel {
         compositeDisposable.add(loadSavedFavoriteApps()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(listData::setValue, Throwable::printStackTrace));
+                .subscribe(listData::setValue, error -> {
+                    error.printStackTrace();
+                    listData.setValue(new ArrayList<>());
+                }));
+
         return listData;
     }
 
@@ -172,16 +176,16 @@ public class MainViewModel extends ViewModel {
             // transform favePackageNameList to appmodels
             if (favePackageNameList != null && !favePackageNameList.isEmpty()) {
                 for (String packageName : favePackageNameList) {
-                    ApplicationInfo appInfo = null;
+                    ApplicationInfo appInfo;
                     try {
+                        // check if list contains already uninstalled apps
                         appInfo = packageManager.getApplicationInfo(packageName, 0);
-                    } catch (PackageManager.NameNotFoundException e) {
+                        faveList.add(new AppModel(appInfo.packageName,
+                                packageManager.getApplicationLabel(appInfo).toString(),
+                                packageManager.getApplicationIcon(appInfo)));
+                    } catch (Exception e) {
                         e.printStackTrace();
-                        emitter.tryOnError(e);
                     }
-                    faveList.add(new AppModel(appInfo.packageName,
-                            packageManager.getApplicationLabel(appInfo).toString(),
-                            packageManager.getApplicationIcon(appInfo)));
                 }
                 emitter.onSuccess(faveList);
             }  else {

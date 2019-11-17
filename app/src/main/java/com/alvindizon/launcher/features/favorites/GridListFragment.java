@@ -135,11 +135,6 @@ public class GridListFragment extends Fragment {
                 }
         });
 
-        viewModel.loadFaveAppList().observe(getViewLifecycleOwner(), list -> {
-            faveList = list;
-            favoritesAdapter.setDataSet(list);
-            updateRecyclerView();
-        });
 
         binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_grid_list_dest_to_app_list_dest));
 
@@ -174,6 +169,17 @@ public class GridListFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // load favorite apps here so that list is refreshed whenever an app is uninstalled
+        viewModel.loadFaveAppList().observe(getViewLifecycleOwner(), list -> {
+            faveList = list;
+            favoritesAdapter.setDataSet(list);
+            updateRecyclerView();
+        });
     }
 
     @Override
