@@ -105,13 +105,13 @@ public class GridListFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel.class);
         packageManager = requireActivity().getPackageManager();
         viewModel.setPackageManager(packageManager);
-        navController = ((MainActivity) requireActivity()).getNavController();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentGridListBinding.inflate(inflater, container, false);
+        navController = ((MainActivity) requireActivity()).getNavController();
         setHasOptionsMenu(true);
         favoritesAdapter = new FavoritesAdapter(faveList, this::launchApp);
         binding.rv.setAdapter(favoritesAdapter);
