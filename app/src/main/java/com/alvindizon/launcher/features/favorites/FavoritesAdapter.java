@@ -49,7 +49,8 @@ public class FavoritesAdapter extends DragDropSwipeAdapter<AppModel, FavoritesAd
 
     @Override
     protected View getViewToTouchToStartDraggingItem(AppModel appModel, ViewHolder viewHolder, int i) {
-        return viewHolder.appIcon;
+        // return null so that whole item layout is used as a drag handle
+        return null;
     }
 
     @Override

@@ -127,6 +127,9 @@ public class GridListFragment extends Fragment {
         // set number of columns
         binding.rv.setNumOfColumnsPerRowInGridList(3);
 
+        // trigger dragging action on long press
+        binding.rv.setLongPressToStartDragging(true);
+
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),
             new OnBackPressedCallback(true) {
                 @Override

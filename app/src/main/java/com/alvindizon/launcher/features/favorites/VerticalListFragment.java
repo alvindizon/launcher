@@ -122,6 +122,9 @@ public class VerticalListFragment extends Fragment {
         // setup rv orientation
         binding.rv.setOrientation(DragDropSwipeRecyclerView.ListOrientation.VERTICAL_LIST_WITH_VERTICAL_DRAGGING);
 
+        // trigger dragging action on long press
+        binding.rv.setLongPressToStartDragging(true);
+
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),
             new OnBackPressedCallback(true) {
                 @Override
