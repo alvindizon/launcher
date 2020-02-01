@@ -10,11 +10,9 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,7 +27,6 @@ import com.alvindizon.launcher.di.Injector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -81,10 +78,7 @@ public class AppListFragment extends Fragment{
             }
         });
 
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(requireContext(), R.drawable.recycler_horizontal_bottom_border)));
         binding.rvNav.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.rvNav.addItemDecoration(itemDecorator);
         binding.rvNav.setAdapter(appListAdapter);
 
         binding.rvNav.addOnScrollListener(new RecyclerView.OnScrollListener() {

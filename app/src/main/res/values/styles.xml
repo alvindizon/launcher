@@ -14,4 +14,19 @@
         <item name="android:tint">@android:color/white</item>
     </style>
 
+    <style name="AppTheme.Wallpaper">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:navigationBarColor">#80000000</item>
+        <item name="android:statusBarColor">#80000000</item>
+    </style>
+
+    <style name="LabelStyle">
+        <item name="android:textColor">@color/itemLabelColor</item>
+        <item name="android:shadowColor">@color/shadowColor</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
+
 </resources>

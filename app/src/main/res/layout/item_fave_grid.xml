@@ -6,7 +6,6 @@
     android:layout_height="@dimen/dimen_grid_item_height"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_layout"
-    android:background="@color/listItemBackground"
     android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
@@ -21,6 +20,7 @@
         tools:srcCompat="@android:drawable/sym_def_app_icon" />
 
     <TextView
+        style="@style/LabelStyle"
         android:id="@+id/app_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

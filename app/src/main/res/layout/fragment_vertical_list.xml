@@ -6,9 +6,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/listBackground">
+        android:fitsSystemWindows="true">
 
         <TextView
+            style="@style/LabelStyle"
             android:id="@+id/empty_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,7 +30,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:item_layout="@layout/item_fave"
-            app:divider="@drawable/recycler_horizontal_bottom_border"
             app:behind_swiped_item_bg_color="@color/colorAccent"
             app:behind_swiped_item_icon="@drawable/ic_remove_item"
             app:behind_swiped_item_icon_margin="16dp"

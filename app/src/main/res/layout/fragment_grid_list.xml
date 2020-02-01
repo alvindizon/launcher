@@ -6,9 +6,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/listBackground">
+        android:fitsSystemWindows="true">
 
         <TextView
+            style="@style/LabelStyle"
             android:id="@+id/empty_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

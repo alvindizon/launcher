@@ -7,4 +7,8 @@
     <color name="divider">#e1e1e1</color>
     <color name="listItemBackground">#ffffff</color>
     <color name="listBackground">#ffffff</color>
+    <color name="itemLabelColor">#ffffff</color>
+    <color name="itemLabelColorGrey">#ff9e9e9e</color>
+    <color name="shadowColor">#7f000000</color>
+    <color name="shadowColorLight">#ffffff</color>
 </resources>
