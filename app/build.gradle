@@ -36,11 +36,11 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     // for appbar_scrolling_view_behavior among others
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
 
     // navigation component
-    implementation "androidx.navigation:navigation-fragment:2.2.0"
-    implementation "androidx.navigation:navigation-ui:2.2.0"
+    implementation "androidx.navigation:navigation-fragment:2.2.1"
+    implementation "androidx.navigation:navigation-ui:2.2.1"
 
     // serialization of objects
     implementation 'com.squareup.moshi:moshi:1.8.0'
@@ -56,9 +56,9 @@ dependencies {
 
     // RxJava2
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.13'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
 
     // Drag and Drop RecyclerView
-    implementation 'com.ernestoyaquello.dragdropswiperecyclerview:drag-drop-swipe-recyclerview:0.5.1'
+    implementation 'com.ernestoyaquello.dragdropswiperecyclerview:drag-drop-swipe-recyclerview:0.6.0'
 }
