@@ -1,11 +1,13 @@
 package com.alvindizon.launcher.features.favorites;
 
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.core.ui.LauncherIcons;
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeAdapter;
 
 import java.util.List;
@@ -29,7 +31,8 @@ public class FavoritesAdapter extends DragDropSwipeAdapter<AppModel, FavoritesAd
         }
 
         private void bind(AppModel appModel, int position) {
-            appIcon.setImageDrawable(appModel.getLauncherIcon());
+            Bitmap bitmap = LauncherIcons.createIconBitmap(appModel.getLauncherIcon(), itemView.getContext(), 1f);
+            appIcon.setImageBitmap(bitmap);
             appLabel.setText(appModel.getAppLabel());
 
             this.itemView.setOnClickListener(v ->

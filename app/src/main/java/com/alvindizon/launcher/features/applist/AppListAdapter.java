@@ -1,5 +1,6 @@
 package com.alvindizon.launcher.features.applist;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvindizon.launcher.R;
 import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.core.ui.LauncherIcons;
 
 import java.util.List;
 
@@ -51,7 +53,8 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
         }
 
         private void bind(AppModel app, int i) {
-            appIcon.setImageDrawable(app.getLauncherIcon());
+            Bitmap bitmap = LauncherIcons.createIconBitmap(app.getLauncherIcon(), itemView.getContext(),1f);
+            appIcon.setImageBitmap(bitmap);
             appLabel.setText(app.getAppLabel());
             appCheckBox.setChecked(isCheckedArray.get(i, false));
             appCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
