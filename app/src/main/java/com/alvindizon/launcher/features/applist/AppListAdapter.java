@@ -57,8 +57,8 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
             appIcon.setImageBitmap(bitmap);
             appLabel.setText(app.getAppLabel());
             appCheckBox.setChecked(isCheckedArray.get(i, false));
-            appCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                isCheckedArray.put(i, isChecked);
+            appCheckBox.setOnClickListener(v -> {
+                boolean isChecked = appCheckBox.isChecked();
                 if(isChecked) {
                     Log.d(TAG, "isChecked: " + app.getPackageName());
                     onAppItemClickListener.onItemClick(app);
