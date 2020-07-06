@@ -1,11 +1,8 @@
-package com.alvindizon.launcher.di.module;
+package com.alvindizon.launcher.data;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-
-import com.alvindizon.launcher.data.FaveAppRecord;
 
 import java.util.List;
 

@@ -2,6 +2,8 @@ package com.alvindizon.launcher.di.module;
 
 import android.content.Context;
 import androidx.room.Room;
+
+import com.alvindizon.launcher.data.FaveAppDao;
 import com.alvindizon.launcher.data.FaveAppDb;
 import javax.inject.Singleton;
 import dagger.Module;

@@ -1,7 +1,5 @@
 package com.alvindizon.launcher.data;
 
-import com.alvindizon.launcher.di.module.FaveAppDao;
-
 import java.util.List;
 
 import javax.inject.Inject;
