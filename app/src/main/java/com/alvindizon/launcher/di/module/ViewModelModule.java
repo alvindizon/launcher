@@ -1,8 +1,10 @@
 package com.alvindizon.launcher.di.module;
 
+import android.content.pm.PackageManager;
+
 import androidx.lifecycle.ViewModel;
 
-import com.alvindizon.launcher.application.MainViewModel;
+import com.alvindizon.launcher.features.main.MainViewModel;
 import com.alvindizon.launcher.core.ViewModelFactory;
 import com.alvindizon.launcher.data.FaveAppRepository;
 
@@ -36,8 +38,8 @@ public class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(MainViewModel.class)
-    ViewModel provideMainViewModel(FaveAppRepository faveAppRepository) {
-        return new MainViewModel(faveAppRepository);
+    ViewModel provideMainViewModel(FaveAppRepository faveAppRepository, PackageManager packageManager) {
+        return new MainViewModel(faveAppRepository, packageManager);
     }
 
 }

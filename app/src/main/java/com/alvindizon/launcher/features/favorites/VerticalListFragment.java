@@ -17,24 +17,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alvindizon.launcher.R;
-import com.alvindizon.launcher.application.MainActivity;
-import com.alvindizon.launcher.application.MainViewModel;
 import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.core.PreferenceHelper;
 import com.alvindizon.launcher.core.SaveStatus;
-import com.alvindizon.launcher.core.ViewModelFactory;
 import com.alvindizon.launcher.databinding.FragmentVerticalListBinding;
 import com.alvindizon.launcher.di.Injector;
+import com.alvindizon.launcher.di.module.ActivityModule;
+import com.alvindizon.launcher.features.main.MainViewModel;
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView;
 import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemDragListener;
 import com.ernestoyaquello.dragdropswiperecyclerview.listener.OnItemSwipeListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -42,14 +40,12 @@ public class VerticalListFragment extends Fragment {
     private static final String TAG = VerticalListFragment.class.getSimpleName();
 
     @Inject
-    public ViewModelFactory viewModelFactory;
+    PackageManager packageManager;
 
     @Inject
-    public PreferenceHelper preferenceHelper;
+    PreferenceHelper preferenceHelper;
 
     private FragmentVerticalListBinding binding;
-    private NavController navController;
-    private PackageManager packageManager;
     private MainViewModel viewModel;
     private FavoritesAdapter favoritesAdapter;
     private OnItemSwipeListener<AppModel> onItemSwipeListener = (position, swipeDirection, appModel) -> {
@@ -94,18 +90,15 @@ public class VerticalListFragment extends Fragment {
 
     @Override
     public void onAttach(@NonNull Context context) {
+        Injector.get().activityComponent(new ActivityModule(requireActivity())).inject(this);
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         super.onAttach(context);
-        Injector.getViewModelComponent().inject(this);
-        viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel.class);
-        packageManager = requireActivity().getPackageManager();
-        viewModel.setPackageManager(packageManager);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentVerticalListBinding.inflate(inflater, container, false);
-        navController = ((MainActivity) requireActivity()).getNavController();
         setHasOptionsMenu(true);
         favoritesAdapter = new FavoritesAdapter(new ArrayList<>(), this::launchApp);
         binding.rv.setAdapter(favoritesAdapter);
@@ -129,7 +122,7 @@ public class VerticalListFragment extends Fragment {
                 }
         });
 
-        binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_vertical_list_dest_to_app_list_dest));
+        binding.fab.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_vertical_list_dest_to_app_list_dest));
 
         return binding.getRoot();
     }
@@ -151,7 +144,7 @@ public class VerticalListFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_switch_to_grid:
-                navController.navigate(R.id.action_vertical_list_dest_to_grid_list_dest);
+                NavHostFragment.findNavController(this).navigate(R.id.action_vertical_list_dest_to_grid_list_dest);
                 return true;
             case R.id.menu_clear_apps:
                 favoritesAdapter.notifyDataSetChanged();

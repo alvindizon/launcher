@@ -1,17 +1,16 @@
 package com.alvindizon.launcher.di.component;
 
-import com.alvindizon.launcher.application.MainActivity;
+import com.alvindizon.launcher.di.module.ActivityModule;
 import com.alvindizon.launcher.di.module.ViewModelModule;
-import com.alvindizon.launcher.features.applist.AppListFragment;
 import com.alvindizon.launcher.features.favorites.GridListFragment;
 import com.alvindizon.launcher.features.favorites.VerticalListFragment;
+import com.alvindizon.launcher.features.main.MainActivity;
 
 import dagger.Subcomponent;
 
-@Subcomponent(modules = ViewModelModule.class)
-public interface ViewModelComponent {
+@Subcomponent(modules = {ActivityModule.class, ViewModelModule.class})
+public interface ActivityComponent {
     void inject(MainActivity activity);
-    void inject(AppListFragment fragment);
     void inject(VerticalListFragment fragment);
     void inject(GridListFragment fragment);
 }

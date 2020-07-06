@@ -9,11 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Wallpaper"
-        android:name=".application.CustomApplication"
+        android:name=".LauncherApp"
         android:launchMode="singleTask"
         android:excludeFromRecents="true"
         android:clearTaskOnLaunch="true">
-        <activity android:name=".application.MainActivity">
+        <activity android:name=".features.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

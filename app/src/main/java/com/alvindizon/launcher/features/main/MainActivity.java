@@ -1,4 +1,4 @@
-package com.alvindizon.launcher.application;
+package com.alvindizon.launcher.features.main;
 
 import android.os.Bundle;
 
@@ -14,6 +14,7 @@ import com.alvindizon.launcher.core.PreferenceHelper;
 import com.alvindizon.launcher.core.ViewModelFactory;
 import com.alvindizon.launcher.databinding.ActivityMainBinding;
 import com.alvindizon.launcher.di.Injector;
+import com.alvindizon.launcher.di.module.ActivityModule;
 
 import javax.inject.Inject;
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        Injector.getViewModelComponent().inject(this);
+        Injector.get().activityComponent(new ActivityModule(this)).inject(this);
         viewModel = new ViewModelProvider(this, viewModelFactory).get(MainViewModel.class);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 

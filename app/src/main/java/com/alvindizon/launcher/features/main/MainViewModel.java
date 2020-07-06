@@ -1,4 +1,4 @@
-package com.alvindizon.launcher.application;
+package com.alvindizon.launcher.features.main;
 
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -32,19 +32,16 @@ public class MainViewModel extends ViewModel {
     private static final String TAG = MainViewModel.class.getSimpleName();
 
     private final FaveAppRepository faveAppRepository;
+    private final PackageManager packageManager;
 
-    private PackageManager packageManager;
     private CompositeDisposable compositeDisposable;
     private List<AppModel> faveList = new ArrayList<>();
 
     @Inject
-    public MainViewModel(FaveAppRepository faveAppRepository) {
+    public MainViewModel(FaveAppRepository faveAppRepository, PackageManager packageManager) {
         this.faveAppRepository = faveAppRepository;
-        this.compositeDisposable = new CompositeDisposable();
-    }
-
-    public void setPackageManager(PackageManager packageManager) {
         this.packageManager = packageManager;
+        this.compositeDisposable = new CompositeDisposable();
     }
 
     public void setFaveList(List<AppModel> newList) {

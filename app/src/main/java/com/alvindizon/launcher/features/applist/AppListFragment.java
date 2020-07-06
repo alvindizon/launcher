@@ -1,55 +1,39 @@
 package com.alvindizon.launcher.features.applist;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alvindizon.launcher.R;
-import com.alvindizon.launcher.application.MainActivity;
-import com.alvindizon.launcher.application.MainViewModel;
 import com.alvindizon.launcher.core.AppModel;
-import com.alvindizon.launcher.core.SaveStatus;
-import com.alvindizon.launcher.core.ViewModelFactory;
 import com.alvindizon.launcher.databinding.FragmentAppListBinding;
-import com.alvindizon.launcher.di.Injector;
+import com.alvindizon.launcher.features.main.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 public class AppListFragment extends Fragment{
-    private static final String TAG = AppListFragment.class.getSimpleName();
     private List<AppModel> appList = new ArrayList<>();
 
     private AppListAdapter appListAdapter;
     private FragmentAppListBinding binding;
-    private NavController navController;
-
-    @Inject
-    public ViewModelFactory viewModelFactory;
 
     private MainViewModel viewModel;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        Injector.getViewModelComponent().inject(this);
-        super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel.class);
-        viewModel.setPackageManager(requireActivity().getPackageManager());
-        navController = ((MainActivity) requireActivity()).getNavController();
+    public void onAttach(@NonNull Context context) {
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        super.onAttach(context);
     }
 
     @Nullable
@@ -61,7 +45,7 @@ public class AppListFragment extends Fragment{
             new OnBackPressedCallback(true) {
                 @Override
                 public void handleOnBackPressed() {
-                    navController.navigateUp();
+                    NavHostFragment.findNavController(AppListFragment.this).navigateUp();
                 }
             });
 
@@ -96,7 +80,7 @@ public class AppListFragment extends Fragment{
             }
         });
 
-        binding.fab.setOnClickListener(v -> navController.navigateUp());
+        binding.fab.setOnClickListener(v -> NavHostFragment.findNavController(AppListFragment.this).navigateUp());
         return binding.getRoot();
     }
 
@@ -109,24 +93,5 @@ public class AppListFragment extends Fragment{
             binding.progressBar.setVisibility(View.GONE);
             binding.rvNav.setVisibility(View.VISIBLE);
         });
-    }
-
-    private void handleSaveStatus(SaveStatus saveStatus) {
-        switch (saveStatus) {
-            case SAVING:
-                Log.d(TAG, "handleSaveStatus: saving");
-                break;
-            case DONE:
-                Log.d(TAG, "handleSaveStatus: done");
-                Toast.makeText(requireContext(), R.string.prompt_saved, Toast.LENGTH_SHORT).show();
-                navController.navigateUp();
-                break;
-            case ERROR:
-                Log.d(TAG, "handleSaveStatus: error");
-                Toast.makeText(requireContext(), R.string.prompt_error, Toast.LENGTH_LONG).show();
-                break;
-            default:
-                break;
-        }
     }
 }
