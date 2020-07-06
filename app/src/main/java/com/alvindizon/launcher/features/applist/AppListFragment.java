@@ -15,7 +15,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.core.applist.AppModel;
 import com.alvindizon.launcher.databinding.FragmentAppListBinding;
 import com.alvindizon.launcher.features.main.MainViewModel;
 

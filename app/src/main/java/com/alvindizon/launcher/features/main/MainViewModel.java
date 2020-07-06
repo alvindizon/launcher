@@ -4,17 +4,15 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.alvindizon.launcher.core.AppModel;
 import com.alvindizon.launcher.core.Const;
-import com.alvindizon.launcher.core.SaveStatus;
+import com.alvindizon.launcher.core.applist.AppModel;
+import com.alvindizon.launcher.data.FaveAppDao;
 import com.alvindizon.launcher.data.FaveAppRecord;
-import com.alvindizon.launcher.data.FaveAppRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,39 +20,31 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainViewModel extends ViewModel {
-    private static final String TAG = MainViewModel.class.getSimpleName();
 
-    private final FaveAppRepository faveAppRepository;
+    private final FaveAppDao faveAppDao;
+
     private final PackageManager packageManager;
 
     private CompositeDisposable compositeDisposable;
-    private List<AppModel> faveList = new ArrayList<>();
+
+    private MutableLiveData<List<AppModel>> listData = new MutableLiveData<>();
 
     @Inject
-    public MainViewModel(FaveAppRepository faveAppRepository, PackageManager packageManager) {
-        this.faveAppRepository = faveAppRepository;
+    public MainViewModel(FaveAppDao faveAppDao, PackageManager packageManager) {
+        this.faveAppDao = faveAppDao;
         this.packageManager = packageManager;
         this.compositeDisposable = new CompositeDisposable();
     }
 
-    public void setFaveList(List<AppModel> newList) {
-        faveList = newList;
-    }
-
-    public void reorderAppList(AppModel appModel, int position) {
-        faveList.remove(appModel);
-        faveList.add(position, appModel);
-    }
-
-    public List<AppModel> getFaveList() {
-        return faveList;
+    public LiveData<List<AppModel>> getListData() {
+        return listData;
     }
 
     public LiveData<List<AppModel>> getLaunchableApps() {
@@ -66,65 +56,38 @@ public class MainViewModel extends ViewModel {
         return appListData;
     }
 
-    public LiveData<SaveStatus> saveFaveApps() {
-        MutableLiveData<SaveStatus> saveStatus = new MutableLiveData<>();
-        compositeDisposable.add(
-            faveAppRepository.clearFaveAppDb()
-            .andThen(Observable.fromIterable(faveList)
-                .flatMapCompletable(appModel -> faveAppRepository.createRecordCompletable(
-                        new FaveAppRecord(appModel.getPackageName(), appModel.getAppLabel())
-                    )
-                )
-            )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe(disposable -> saveStatus.setValue(SaveStatus.SAVING))
-            .subscribe(() -> saveStatus.setValue(SaveStatus.DONE),
-                error -> {
-                    error.printStackTrace();
-                    saveStatus.setValue(SaveStatus.ERROR);
-                }
-            )
-        );
-        return saveStatus;
+    public void loadFaveAppList() {
+        compositeDisposable.add(Single.fromCallable(faveAppDao::getAllRecords)
+                .flatMap(this::loadSavedFavoriteApps)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(listData::setValue, Throwable::printStackTrace));
     }
 
-    public LiveData<List<AppModel>> loadFaveAppList() {
-        MutableLiveData<List<AppModel>> listData = new MutableLiveData<>();
-        compositeDisposable.add(faveAppRepository.getFaveApps()
-            .defaultIfEmpty(new ArrayList<>())
-            .flatMapSingle(this::loadSavedFavoriteApps)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(listData::setValue, Throwable::printStackTrace));
-        return listData;
-    }
-
-    public void deleteRecord(AppModel appModel) {
-        compositeDisposable.add(faveAppRepository.deleteRecordByName(appModel.getPackageName())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(() -> faveList.remove(appModel), Throwable::printStackTrace)
-        );
-    }
-
-    public void clearFaveApps() {
-        compositeDisposable.add(faveAppRepository.clearFaveAppDb()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(() -> {
-                faveList.clear();
-            }, Throwable::printStackTrace)
-        );
-    }
-
+    /**
+     * Takes an AppModel object, converts it to FaveAppRecord, and inserts it
+     * to the DB. If the app already exists in the faveapps DB, it is ignored and not added.
+     * @param app An AppModel object that is
+     */
     public void addFaveApp(AppModel app) {
-        compositeDisposable.add(faveAppRepository.createRecordCompletable(
-                new FaveAppRecord(app.getPackageName(), app.getAppLabel())
+        compositeDisposable.add(Completable.fromAction(() ->
+                faveAppDao.insert(new FaveAppRecord(app.getPackageName(), app.getAppLabel()))
             )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(() -> Log.d(TAG, "addFaveApp: success"), Throwable::printStackTrace)
+            .subscribe(() -> {}, Throwable::printStackTrace)
+        );
+    }
+
+    /**
+     * Removes an app from the faveapps DB via its package name.
+     * @param app An app to be removed from the db
+     */
+    public void deleteFaveApp(AppModel app) {
+        compositeDisposable.add(Completable.fromAction(() -> faveAppDao.deleteRecordByPackageName(app.getPackageName()))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(() -> {}, Throwable::printStackTrace)
         );
     }
 
@@ -150,27 +113,27 @@ public class MainViewModel extends ViewModel {
     }
 
     private Single<List<AppModel>> loadSavedFavoriteApps(List<FaveAppRecord> faveAppRecords) {
-        return Single.create(emitter -> {
+        return Single.fromCallable(() -> {
             List<AppModel> faveList = new ArrayList<>();
-            if(!faveAppRecords.isEmpty()) {
-                // transform favorites retrieved from DB to appmodels that will be used in the UI
-                for (FaveAppRecord faveAppRecord : faveAppRecords) {
-                    ApplicationInfo appInfo = null;
-                    try {
-                        appInfo = packageManager.getApplicationInfo(faveAppRecord.getPackageName(), 0);
-                        faveList.add(new AppModel(appInfo.packageName,
-                                packageManager.getApplicationLabel(appInfo).toString(),
-                                packageManager.getApplicationIcon(appInfo)));
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
-                    }
+            // transform favorites retrieved from DB to appmodels that will be used in the UI
+            for (FaveAppRecord faveAppRecord : faveAppRecords) {
+                ApplicationInfo appInfo;
+                try {
+                    appInfo = packageManager.getApplicationInfo(faveAppRecord.getPackageName(), 0);
+                    faveList.add(new AppModel(
+                            appInfo.packageName,
+                            packageManager.getApplicationLabel(appInfo).toString(),
+                            packageManager.getApplicationIcon(appInfo)));
+                } catch (PackageManager.NameNotFoundException e) {
+                    // app was deleted/uninstalled, so delete record from DB
+                    faveAppDao.deleteRecordByPackageName(faveAppRecord.getPackageName());
+                    e.printStackTrace();
                 }
-                emitter.onSuccess(faveList);
-            } else {
-                emitter.onSuccess(new ArrayList<>());
             }
+            return faveList;
         });
     }
+
     private List<ResolveInfo> getLaunchableActivities() {
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -179,4 +142,33 @@ public class MainViewModel extends ViewModel {
         return resInfos;
     }
 
+    /**
+     * If fave apps are rearranged, overwrite existing fave apps list via this method.
+     * This method basically calls an @Insert-annotated method with a REPLACE conflict strategy, which means
+     * that if a similar record of a favorite app already exists in the DB, it will be replaced.
+     * @param updatedList The list with rearranged favorite apps
+     */
+    public void updateList(List<AppModel> updatedList) {
+        compositeDisposable.add(
+            Single.fromCallable(() -> {
+                List<FaveAppRecord> dbList = new ArrayList<>();
+                for(AppModel appModel : updatedList) {
+                    dbList.add(new FaveAppRecord(appModel.getPackageName(), appModel.getAppLabel()));
+                }
+                return dbList;
+            })
+            .flatMapCompletable(records -> Completable.fromAction(() -> faveAppDao.insert(records)))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(() -> {}, Throwable::printStackTrace)
+        );
+    }
+
+    public void clearFaveApps() {
+        compositeDisposable.add(faveAppDao.clearFaveAppDb()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {}, Throwable::printStackTrace)
+        );
+    }
 }

@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvindizon.launcher.R;
-import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.core.applist.AppModel;
 import com.alvindizon.launcher.core.ui.LauncherIcons;
 
 import java.util.List;

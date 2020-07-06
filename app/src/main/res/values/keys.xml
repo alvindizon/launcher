@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string translatable="false" name="key_is_list">key_is_list</string>
+    <string translatable="false" name="key_column_cnt">key_column_cnt</string>
 </resources>

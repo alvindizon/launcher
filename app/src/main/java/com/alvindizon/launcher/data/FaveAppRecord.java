@@ -5,15 +5,17 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "faveapps", indices = {@Index(value = "id", unique = true)})
+@Entity(tableName = "faveapps", indices = {@Index(value = {"packageName", "appLabel"}, unique = true)})
 public class FaveAppRecord {
 
     @PrimaryKey(autoGenerate = true)
     @NonNull
     private int id;
 
+    @NonNull
     private String packageName;
 
+    @NonNull
     private String appLabel;
 
     public FaveAppRecord(String packageName, String appLabel) {

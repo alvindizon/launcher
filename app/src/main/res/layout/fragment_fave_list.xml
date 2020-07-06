@@ -29,7 +29,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:item_layout="@layout/item_fave"
             app:behind_swiped_item_bg_color="@color/colorAccent"
             app:behind_swiped_item_icon="@drawable/ic_remove_item"
             app:behind_swiped_item_icon_margin="16dp"

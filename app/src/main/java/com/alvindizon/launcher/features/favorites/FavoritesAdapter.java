@@ -5,8 +5,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.DiffUtil;
+
 import com.alvindizon.launcher.R;
-import com.alvindizon.launcher.core.AppModel;
+import com.alvindizon.launcher.core.applist.AppModel;
+import com.alvindizon.launcher.core.applist.AppModelDiffCallback;
 import com.alvindizon.launcher.core.ui.LauncherIcons;
 import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeAdapter;
 
@@ -19,6 +22,7 @@ public class FavoritesAdapter extends DragDropSwipeAdapter<AppModel, FavoritesAd
     }
 
     private FaveItemClickListener onFaveItemClickListener;
+    private List<AppModel> appList;
 
     class ViewHolder extends DragDropSwipeAdapter.ViewHolder {
         private final ImageView appIcon;
@@ -36,12 +40,12 @@ public class FavoritesAdapter extends DragDropSwipeAdapter<AppModel, FavoritesAd
             appLabel.setText(appModel.getAppLabel());
 
             this.itemView.setOnClickListener(v ->
-                    onFaveItemClickListener.onItemClick(getDataSet().get(position).getPackageName()));
+                    onFaveItemClickListener.onItemClick(appList.get(position).getPackageName()));
         }
     }
 
-    public FavoritesAdapter(List<AppModel> list, FaveItemClickListener onFaveItemClickListener) {
-        setDataSet(list);
+    public FavoritesAdapter(FaveItemClickListener onFaveItemClickListener) {
+//        setDataSet(list);
         this.onFaveItemClickListener = onFaveItemClickListener;
     }
 
@@ -59,5 +63,15 @@ public class FavoritesAdapter extends DragDropSwipeAdapter<AppModel, FavoritesAd
     @Override
     protected void onBindViewHolder(AppModel appModel, ViewHolder viewHolder, int i) {
         viewHolder.bind(appModel, i);
+    }
+
+    public void setAppList(List<AppModel> appList) {
+        this.appList = appList;
+        setDataSet(appList);
+    }
+
+    public void updateList(List<AppModel> newList) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AppModelDiffCallback(appList, newList));
+        diffResult.dispatchUpdatesTo(this);
     }
 }

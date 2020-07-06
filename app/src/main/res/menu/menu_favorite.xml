@@ -9,13 +9,8 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/menu_switch_to_vertical"
-        android:title="@string/label_switch_to_vertical"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/menu_switch_to_grid"
-        android:title="@string/label_switch_to_grid"
+        android:id="@+id/menu_column_count"
+        android:title="@string/label_column_count"
         app:showAsAction="never"/>
 
 </menu>

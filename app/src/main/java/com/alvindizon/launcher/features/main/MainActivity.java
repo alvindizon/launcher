@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
 
 import com.alvindizon.launcher.R;
@@ -38,16 +37,6 @@ public class MainActivity extends AppCompatActivity {
         Injector.get().activityComponent(new ActivityModule(this)).inject(this);
         viewModel = new ViewModelProvider(this, viewModelFactory).get(MainViewModel.class);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
-        // determine whether to start using list or grid fragment
-        // by obtaining last used orientation from shared prefs
-        NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.navigation_main);
-        if(preferenceHelper.get(R.string.key_is_list, true)) {
-            navGraph.setStartDestination(R.id.vertical_list_dest);
-        } else {
-            navGraph.setStartDestination(R.id.grid_list_dest);
-        }
-        navController.setGraph(navGraph);
     }
 
     @Override

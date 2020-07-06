@@ -12,4 +12,7 @@
     <string name="label_goto_test_view">Display drag and drop view</string>
     <string name="label_switch_to_grid">Switch to grid view</string>
     <string name="label_switch_to_vertical">Switch to list view</string>
+    <string name="label_column_count">Column count</string>
+    <string name="pref_default_grid_span_cnt">3</string>
+    <string name="label_ok">OK</string>
 </resources>

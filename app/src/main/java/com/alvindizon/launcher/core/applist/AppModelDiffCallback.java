@@ -1,4 +1,4 @@
-package com.alvindizon.launcher.core;
+package com.alvindizon.launcher.core.applist;
 
 import androidx.recyclerview.widget.DiffUtil;
 
